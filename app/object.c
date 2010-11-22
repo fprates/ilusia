@@ -9,21 +9,23 @@
 #include <stdio.h>
 #include <faclib.h>
 #include "ilusia.h"
+
 struct ils_obj {
 	const char *name;
 	struct fac_lista *objs;
+	struct ils_control *control;
     void *espec;
 };
 
 struct ils_obj *ils_ini(struct ils_config config)
 {
-    struct ils_obj *game = ils_def(config.title);
+    struct ils_obj *game = ils_def_obj(config.title);
     game->espec = &config;
 
     return game;
 }
 
-struct ils_obj *ils_def(const char *name)
+struct ils_obj *ils_def_obj(const char *name)
 {
 	struct ils_obj *obj = malloc(sizeof(*obj));
 	obj->name = name;
@@ -33,9 +35,14 @@ struct ils_obj *ils_def(const char *name)
 	return obj;
 }
 
-void ils_inc(struct ils_obj *orig, struct ils_obj *dest)
+void ils_inc_obj(struct ils_obj *orig, struct ils_obj *dest)
 {
 	fac_inc_item(dest->objs, orig);
+}
+
+void ils_def_obj_control(struct ils_obj *obj, struct ils_control *control)
+{
+    obj->control = control;
 }
 
 void ils_start(struct ils_obj *game)
