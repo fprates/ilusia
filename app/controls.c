@@ -9,8 +9,14 @@
 #include <stdio.h>
 #include <faclib.h>
 #include "ilusia.h"
+#include "object.h"
 
-struct fac_lista *pool = NULL;
+struct fac_lista *global_pool;
+
+struct s_pool_item {
+    struct ils_obj * game;
+    struct fac_lista *pool;
+};
 
 struct ils_control {
     char *name;
@@ -22,18 +28,12 @@ struct s_key {
     int code;
 };
 
-void ils_ini_controls()
-{
-    pool = fac_ini_lista();
-    printf("i: pool de controles inicializado.\n");
-}
-
-struct ils_control *ils_def_control(char *name)
+struct ils_control *ils_def_control(struct ils_obj *game, char *name)
 {
     struct ils_control *control = malloc(sizeof(*control));
     control->name = name;
     control->keys = fac_ini_lista();
-    fac_inc_item(pool, control);
+    _ins_control(game, control);
 
     printf("i: controle %s inicializado.\n", name);
     return control;
@@ -52,22 +52,20 @@ void ils_def_input_proc(struct ils_control *control,
     control->input_proc = input_proc;
 }
 
-void ils_term_controls(void)
+void _term_control(struct ils_control *control)
 {
-    struct ils_control *control;
-    struct fac_iterador *it = fac_ini_iterador(pool);
+	struct fac_iterador *it;
 
-    /*
-     * remove controles individuais
-     */
-    while (fac_existe_prox(it)) {
-        control = fac_proximo(it);
-        fac_rm_lista(control->keys);
+	if (control == NULL)
+		return;
 
-        printf("i: controle %s finalizado.\n", control->name);
-        free(control);
-    }
+	it = fac_ini_iterador(control->keys);
+	while (fac_existe_prox(it))
+		free(fac_proximo(it));
 
-    fac_rm_iterador(it);
-    fac_rm_lista(pool);
+	fac_rm_iterador(it);
+	fac_rm_lista(control->keys);
+
+	printf("i: controle %s finalizado.\n", control->name);
+	free(control);
 }

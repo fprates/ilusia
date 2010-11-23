@@ -36,16 +36,13 @@ int main(void)
     ils_inc_obj(lata, cenario);
     ils_inc_obj(cenario, game);
 
-    ils_ini_controls();
-    control = ils_def_control("player 1");
+    control = ils_def_control(game, "player 1");
     ils_def_key(control, 'A');
     ils_def_key(control, 'S');
     ils_def_input_proc(control, input);
     ils_def_obj_control(joao, control);
 
-    ils_start(game);
-
-    ils_term_controls();
+    ils_start(game, cenario);
     ils_term_all(game);
 
     printf("That's all, folks!\n");
