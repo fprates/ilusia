@@ -54,6 +54,16 @@ void ils_inc_obj(struct ils_obj *orig, struct ils_obj *dest)
 	fac_inc_item(dest->objs, orig);
 }
 
+struct fac_iterador *ils_ret_objs(struct ils_obj *obj)
+{
+	return fac_ini_iterador(obj->objs);
+}
+
+const char *ils_ret_name(struct ils_obj *obj)
+{
+	return obj->name;
+}
+
 void ils_def_obj_control(struct ils_obj *obj, struct ils_control *control)
 {
     obj->control = control;
