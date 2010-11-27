@@ -46,6 +46,12 @@ struct ils_evento {
 	int key_code;
 };
 
+struct ils_pos {
+	float x;
+	float y;
+	float z;
+};
+
 extern struct ils_obj *ils_ini(const struct ils_config);
 extern struct ils_obj *ils_def_obj(const char *);
 extern void ils_inc_obj(struct ils_obj *, struct ils_obj *);
@@ -55,6 +61,8 @@ const extern char *ils_ret_name(struct ils_obj *);
 extern void ils_def_pos(struct ils_obj *, struct ils_obj *,
 		float, float, float);
 extern struct ils_obj *ils_ret_obj_from_complex(struct ils_complex_obj *);
+extern void ils_def_relat_pos(struct ils_obj *, struct ils_obj *, float, float, float);
+extern struct ils_pos ils_ret_obj_pos(struct ils_obj *, struct ils_obj *);
 
 extern void ils_def_key(struct ils_control *, int);
 extern void ils_def_input_proc(struct ils_control *,

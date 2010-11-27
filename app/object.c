@@ -26,9 +26,7 @@ struct s_game {
 
 struct ils_complex_obj {
 	struct ils_obj *obj;
-	float x;
-	float y;
-	float z;
+	struct ils_pos pos;
 };
 
 struct ils_obj *ils_ini(struct ils_config config)
@@ -98,12 +96,53 @@ void ils_def_pos(struct ils_obj *obj, struct ils_obj *cen, float x, float y, flo
 	while (fac_existe_prox(it)) {
 		obj_ = fac_proximo(it);
 
-		obj_->x = x;
-		obj_->y = y;
-		obj_->z = z;
+		obj_->pos.x = x;
+		obj_->pos.y = y;
+		obj_->pos.z = z;
 	}
 
 	fac_rm_iterador(it);
+}
+
+void ils_def_relat_pos(struct ils_obj *dest, struct ils_obj *orig,
+		float x, float y, float z)
+{
+	struct ils_complex_obj *obj;
+	struct fac_iterador *it = fac_ini_iterador(dest->objs);
+
+	while (fac_existe_prox(it)) {
+		obj = fac_proximo(it);
+
+		if (obj->obj != orig)
+			continue;
+
+		obj->pos.x += x;
+		obj->pos.y += y;
+		obj->pos.z += z;
+		break;
+	}
+
+	fac_rm_iterador(it);
+}
+
+struct ils_pos ils_ret_obj_pos(struct ils_obj *dest, struct ils_obj *orig)
+{
+	struct ils_complex_obj *obj;
+	struct ils_pos pos;
+	struct fac_iterador *it = fac_ini_iterador(dest->objs);
+
+	while (fac_existe_prox(it)) {
+		obj = fac_proximo(it);
+
+		if (obj->obj != orig)
+			continue;
+
+		pos = obj->pos;
+		break;
+	}
+
+	fac_rm_iterador(it);
+	return pos;
 }
 
 void _ins_control(struct ils_obj *game, struct ils_control *control)

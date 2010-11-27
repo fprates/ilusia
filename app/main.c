@@ -6,21 +6,34 @@
  */
 
 #include <stdio.h>
+#include <curses.h>
 #include "ilusia.h"
 
 static void input(struct ils_evento evento)
 {
+	struct ils_pos pos;
+
 	switch(evento.key_code) {
 	case 'A':
 	case 'a':
+		ils_def_relat_pos(evento.cen, evento.obj, -1, 0, 0);
+		pos = ils_ret_obj_pos(evento.cen, evento.obj);
+		delch();
+		move(pos.y, pos.x);
+		insch('X');
 
 		break;
 
 	case 'D':
 	case 'd':
+		ils_def_relat_pos(evento.cen, evento.obj, 1, 0, 0);
+		pos = ils_ret_obj_pos(evento.cen, evento.obj);
+		delch();
+		move(pos.y, pos.x);
+		insch('X');
+
 		break;
 	}
-    printf("%s\n", ils_ret_name(evento.obj));
 }
 
 int main(void)
@@ -53,8 +66,8 @@ int main(void)
     control = ils_def_control(game, "player 1");
     ils_def_key(control, 'A');
     ils_def_key(control, 'a');
-    ils_def_key(control, 'S');
-    ils_def_key(control, 's');
+    ils_def_key(control, 'D');
+    ils_def_key(control, 'd');
     ils_def_input_proc(control, input);
     ils_def_obj_control(joao, control);
 

@@ -18,6 +18,7 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen)
     WINDOW *win = initscr();
 	struct fac_iterador *it = ils_ret_complex_objs(cen);
 
+	noecho();
     cbreak();
     for (;;) {
     	c = getch();
