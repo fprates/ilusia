@@ -16,7 +16,7 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen)
 	struct ils_obj *obj_;
 	struct ils_evento evento;
     WINDOW *win = initscr();
-	struct fac_iterador *it = ils_ret_objs(cen);
+	struct fac_iterador *it = ils_ret_complex_objs(cen);
 
     cbreak();
     for (;;) {
@@ -26,7 +26,7 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen)
 
         fac_rst_iterador(it);
         while (fac_existe_prox(it)) {
-            obj_ = fac_proximo(it);
+            obj_ = ils_ret_obj_from_complex(fac_proximo(it));
             if (!ils_verif_key_event(obj_, c))
             	continue;
 

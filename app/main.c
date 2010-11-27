@@ -13,6 +13,7 @@ static void input(struct ils_evento evento)
 	switch(evento.key_code) {
 	case 'A':
 	case 'a':
+
 		break;
 
 	case 'D':
@@ -44,6 +45,10 @@ int main(void)
     ils_inc_obj(cao, cenario);
     ils_inc_obj(lata, cenario);
     ils_inc_obj(cenario, game);
+
+    ils_def_pos(joao, cenario, 1, 1, 0);
+    ils_def_pos(cao, cenario, 20, 1, 0);
+    ils_def_pos(lata, cenario, 40, 1, 0);
 
     control = ils_def_control(game, "player 1");
     ils_def_key(control, 'A');
