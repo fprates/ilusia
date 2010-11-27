@@ -6,39 +6,33 @@
  */
 
 #include <stdio.h>
-//#include <termios.h>
 #include <faclib.h>
+#include <curses.h>
 #include "ilusia.h"
 
-void ils_start(struct ils_obj *game, struct ils_obj *obj)
+void ils_start(struct ils_obj *game, struct ils_obj *cen)
 {
-//    int c;
-//    struct ils_obj *obj;
-//    struct termios term_orig;
-//    struct termios term_dest;
-//    struct fac_iterador *it;
-//
-//    tcgetattr(0,&term_orig);
-//
-//    term_dest = term_orig;
-//    term_dest.c_lflag&=~ICANON; //ignora ENTER
-//    term_dest.c_lflag&=~ECHO; //não ecoa
-//
-//    tcsetattr(0,TCSANOW,&term_dest);
-//
-//    for (;;) {
-//        c = getchar();
-//
-//        if (c == 27)
-//            break;
-//
-//        it = ils_ret_objs(game);
-//        while (fac_existe_prox(it)) {
-//            obj = fac_proximo(it);
-//        }
-//
-//        fac_rm_iterador(it);
-//    }
-//
-//    tcsetattr(0,TCSANOW,&term_orig);
+    int c;
+	struct ils_obj *obj_;
+    WINDOW *win = initscr();
+	struct fac_iterador *it = ils_ret_objs(cen);
+
+    cbreak();
+    for (;;) {
+    	c = getch();
+        if (c == 27)
+            break;
+
+        fac_rst_iterador(it);
+        while (fac_existe_prox(it)) {
+            obj_ = fac_proximo(it);
+            if (ils_verif_key_event(obj_, c))
+            	ils_send_event(obj_, c);
+        }
+    }
+
+    fac_rm_iterador(it);
+    endwin();
+    win = NULL;
+
 }

@@ -8,9 +8,10 @@
 #include <stdio.h>
 #include "ilusia.h"
 
-static void input(struct ils_control *control)
+static void input(struct ils_obj *obj, struct ils_control *control,
+		struct ils_evento evento)
 {
-
+    printf("%s\n", ils_ret_name(obj));
 }
 
 int main(void)
@@ -38,7 +39,9 @@ int main(void)
 
     control = ils_def_control(game, "player 1");
     ils_def_key(control, 'A');
+    ils_def_key(control, 'a');
     ils_def_key(control, 'S');
+    ils_def_key(control, 's');
     ils_def_input_proc(control, input);
     ils_def_obj_control(joao, control);
 

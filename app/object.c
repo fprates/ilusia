@@ -43,6 +43,7 @@ struct ils_obj *ils_def_obj(const char *name)
 	obj->name = name;
 	obj->objs = fac_ini_lista();
 	obj->espec = NULL;
+	obj->control = NULL;
 
 	printf("i: objeto %s gerado.\n", name);
 	return obj;
@@ -67,6 +68,11 @@ const char *ils_ret_name(struct ils_obj *obj)
 void ils_def_obj_control(struct ils_obj *obj, struct ils_control *control)
 {
     obj->control = control;
+}
+
+struct ils_control *ils_ret_obj_control(struct ils_obj *obj)
+{
+	return obj->control;
 }
 
 void _ins_control(struct ils_obj *game, struct ils_control *control)
