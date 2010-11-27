@@ -16,6 +16,7 @@ struct ils_obj {
 	const char *name;
 	struct fac_lista *objs;
 	struct ils_control *control;
+	void (*proc_output)(struct ils_view);
     void *espec;
 };
 
@@ -143,6 +144,21 @@ struct ils_pos ils_ret_obj_pos(struct ils_obj *dest, struct ils_obj *orig)
 
 	fac_rm_iterador(it);
 	return pos;
+}
+
+void ils_def_output_proc(struct ils_obj *obj,
+		void (*proc_output)(struct ils_view view))
+{
+	obj->proc_output = proc_output;
+}
+
+void _call_output_proc(struct ils_obj *cen, struct ils_obj *obj)
+{
+	struct ils_view view;
+
+	view.cen = cen;
+	view.obj = obj;
+	obj->proc_output(view);
 }
 
 void _ins_control(struct ils_obj *game, struct ils_control *control)

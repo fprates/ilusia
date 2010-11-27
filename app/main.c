@@ -7,30 +7,39 @@
 
 #include <stdio.h>
 #include <curses.h>
+#include <string.h>
 #include "ilusia.h"
 
 enum actions {LEFT, RIGHT};
+struct ils_pos pos_;
+
+static void output(struct ils_view view)
+{
+	struct ils_pos pos = ils_ret_obj_pos(view.cen, view.obj);
+	const char *name = ils_ret_name(view.obj);
+
+	move(pos_.y, pos_.x);
+	delch();
+	move(pos.y, pos.x);
+
+	if (strcmp(name, "joao") == 0)
+		insch('J');
+	else
+		insch('C');
+}
 
 static void input(struct ils_evento evento)
 {
-	struct ils_pos pos;
-
 	switch(evento.evcode) {
 	case LEFT:
+		pos_ = ils_ret_obj_pos(evento.cen, evento.obj);
 		ils_def_relat_pos(evento.cen, evento.obj, -1, 0, 0);
-		pos = ils_ret_obj_pos(evento.cen, evento.obj);
-		delch();
-		move(pos.y, pos.x);
-		insch('X');
 
 		break;
 
 	case RIGHT:
+		pos_ = ils_ret_obj_pos(evento.cen, evento.obj);
 		ils_def_relat_pos(evento.cen, evento.obj, 1, 0, 0);
-		pos = ils_ret_obj_pos(evento.cen, evento.obj);
-		delch();
-		move(pos.y, pos.x);
-		insch('X');
 
 		break;
 	}
@@ -76,6 +85,8 @@ int main(void)
     ils_def_key(control2, RIGHT, 'L');
     ils_def_key(control2, RIGHT, 'l');
 
+    ils_def_output_proc(joao, output);
+    ils_def_output_proc(cao, output);
     ils_def_input_proc(control1, input);
     ils_def_input_proc(control2, input);
 

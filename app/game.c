@@ -38,11 +38,12 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen)
             evento.key_code = c;
 
             ils_send_event(obj_, &evento);
+            _call_output_proc(cen, obj_);
         }
     }
 
-    fac_rm_iterador(it);
     endwin();
+    fac_rm_iterador(it);
     win = NULL;
 
 }
