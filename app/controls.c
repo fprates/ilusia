@@ -26,6 +26,7 @@ struct ils_control {
 
 struct s_key {
     int code;
+    int evcode;
 };
 
 struct ils_control *ils_def_control(struct ils_obj *game, char *name)
@@ -39,10 +40,11 @@ struct ils_control *ils_def_control(struct ils_obj *game, char *name)
     return control;
 }
 
-void ils_def_key(struct ils_control *control, int key)
+void ils_def_key(struct ils_control *control, int evcode, int key)
 {
     struct s_key *key_ = malloc(sizeof(*key_));
     key_->code = key;
+    key_->evcode = evcode;
     fac_inc_item(control->keys, key_);
 }
 
@@ -52,15 +54,15 @@ void ils_def_input_proc(struct ils_control *control,
     control->input_proc = input_proc;
 }
 
-int ils_verif_key_event(struct ils_obj *obj, int code)
+int ils_ret_key_event(struct ils_obj *obj, int code)
 {
 	struct s_key *key;
 	struct fac_iterador *it;
-	int ret = 0;
+	int ret = -1;
 	struct ils_control *control = ils_ret_obj_control(obj);
 
 	if (control == NULL)
-		return 0;
+		return -1;
 
 	it = fac_ini_iterador(control->keys);
 
@@ -70,7 +72,7 @@ int ils_verif_key_event(struct ils_obj *obj, int code)
 		if (key->code != code)
 			continue;
 
-		ret = 1;
+		ret = key->evcode;
 		break;
 	}
 

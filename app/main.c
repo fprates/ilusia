@@ -9,13 +9,14 @@
 #include <curses.h>
 #include "ilusia.h"
 
+enum actions {LEFT, RIGHT};
+
 static void input(struct ils_evento evento)
 {
 	struct ils_pos pos;
 
-	switch(evento.key_code) {
-	case 'A':
-	case 'a':
+	switch(evento.evcode) {
+	case LEFT:
 		ils_def_relat_pos(evento.cen, evento.obj, -1, 0, 0);
 		pos = ils_ret_obj_pos(evento.cen, evento.obj);
 		delch();
@@ -24,8 +25,7 @@ static void input(struct ils_evento evento)
 
 		break;
 
-	case 'D':
-	case 'd':
+	case RIGHT:
 		ils_def_relat_pos(evento.cen, evento.obj, 1, 0, 0);
 		pos = ils_ret_obj_pos(evento.cen, evento.obj);
 		delch();
@@ -43,7 +43,8 @@ int main(void)
     struct ils_obj *joao;
     struct ils_obj *cao;
     struct ils_obj *lata;
-    struct ils_control *control;
+    struct ils_control *control1;
+    struct ils_control *control2;
     struct ils_config config;
 
     config.title = "Exemplo";
@@ -63,13 +64,23 @@ int main(void)
     ils_def_pos(cao, cenario, 20, 1, 0);
     ils_def_pos(lata, cenario, 40, 1, 0);
 
-    control = ils_def_control(game, "player 1");
-    ils_def_key(control, 'A');
-    ils_def_key(control, 'a');
-    ils_def_key(control, 'D');
-    ils_def_key(control, 'd');
-    ils_def_input_proc(control, input);
-    ils_def_obj_control(joao, control);
+    control1 = ils_def_control(game, "player 1");
+    ils_def_key(control1, LEFT, 'A');
+    ils_def_key(control1, LEFT, 'a');
+    ils_def_key(control1, RIGHT, 'D');
+    ils_def_key(control1, RIGHT, 'd');
+
+    control2 = ils_def_control(game, "player 2");
+    ils_def_key(control2, LEFT, 'J');
+    ils_def_key(control2, LEFT, 'j');
+    ils_def_key(control2, RIGHT, 'L');
+    ils_def_key(control2, RIGHT, 'l');
+
+    ils_def_input_proc(control1, input);
+    ils_def_input_proc(control2, input);
+
+    ils_def_obj_control(joao, control1);
+    ils_def_obj_control(cao, control2);
 
     ils_start(game, cenario);
     ils_term_all(game);

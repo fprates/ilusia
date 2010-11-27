@@ -28,12 +28,15 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen)
         fac_rst_iterador(it);
         while (fac_existe_prox(it)) {
             obj_ = ils_ret_obj_from_complex(fac_proximo(it));
-            if (!ils_verif_key_event(obj_, c))
+            evento.evcode = ils_ret_key_event(obj_, c);
+
+            if (evento.evcode == -1)
             	continue;
 
             evento.obj = obj_;
             evento.cen = cen;
             evento.key_code = c;
+
             ils_send_event(obj_, &evento);
         }
     }

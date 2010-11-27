@@ -42,8 +42,8 @@ struct ils_config {
 struct ils_evento {
 	struct ils_obj *obj;
 	struct ils_obj *cen;
-	struct ils_control *control;
 	int key_code;
+	int evcode;
 };
 
 struct ils_pos {
@@ -64,12 +64,12 @@ extern struct ils_obj *ils_ret_obj_from_complex(struct ils_complex_obj *);
 extern void ils_def_relat_pos(struct ils_obj *, struct ils_obj *, float, float, float);
 extern struct ils_pos ils_ret_obj_pos(struct ils_obj *, struct ils_obj *);
 
-extern void ils_def_key(struct ils_control *, int);
+extern void ils_def_key(struct ils_control *, int, int);
 extern void ils_def_input_proc(struct ils_control *,
 		void (*)(struct ils_evento));
 extern void ils_def_obj_control(struct ils_obj *, struct ils_control *);
 extern struct ils_control *ils_ret_obj_control(struct ils_obj *);
-extern int ils_verif_key_event(struct ils_obj *, int);
+extern int ils_ret_key_event(struct ils_obj *, int);
 extern void ils_send_event(struct ils_obj *, struct ils_evento *);
 
 extern void ils_start(struct ils_obj *, struct ils_obj *);
