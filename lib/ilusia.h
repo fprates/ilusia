@@ -8,28 +8,28 @@
 #ifndef ILUSIA_H_
 #define ILUSIA_H_
 
-//#ifdef ILUSIA_LINUX
-//#define ILSPREFIX
-//#define ILS_SDL "libSDL.so"
-//#define ILS_GL "libGL.so"
-//#define ILS_GLU "libGLU.so"
-//#define ILS_TTF "libSDL_ttf.so"
-//#define ILS_IMG "libSDL_image.so"
-//#endif
-//
-//#ifdef ILUSIA_WIN32
-//#include <windows.h>
-//#define ILS_SDL "SDL.dll"
-//#define ILS_GL "opengl32.dll"
-//#define ILS_GLU "glu32.dll"
-//#define ILS_TTF "SDL_ttf.dll"
-//#define ILS_IMG "SDL_image.dll"
-//#if BUILDING_DLL
-//# define ILSPREFIX __declspec (dllexport)
-//#else /* Not BUILDING_DLL */
-//# define ILSPREFIX __declspec (dllimport)
-//#endif /* Not BUILDING_DLL */
-//#endif
+#ifdef ILUSIA_LINUX
+#define ILSPREFIX
+#define ILS_SDL "libSDL.so"
+#define ILS_GL "libGL.so"
+#define ILS_GLU "libGLU.so"
+#define ILS_TTF "libSDL_ttf.so"
+#define ILS_IMG "libSDL_image.so"
+#endif
+
+#ifdef ILUSIA_WIN32
+#include <windows.h>
+#define ILS_SDL "SDL.dll"
+#define ILS_GL "opengl32.dll"
+#define ILS_GLU "glu32.dll"
+#define ILS_TTF "SDL_ttf.dll"
+#define ILS_IMG "SDL_image.dll"
+#if BUILDING_DLL
+# define ILSPREFIX __declspec (dllexport)
+#else /* Not BUILDING_DLL */
+# define ILSPREFIX __declspec (dllimport)
+#endif /* Not BUILDING_DLL */
+#endif
 
 struct ils_obj;
 struct ils_complex_obj;

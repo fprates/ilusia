@@ -8,7 +8,7 @@
 #include <stdio.h>
 #include <curses.h>
 #include <string.h>
-#include "ilusia.h"
+#include "../lib/ilusia.h"
 
 enum actions {LEFT, RIGHT};
 struct ils_pos pos_;

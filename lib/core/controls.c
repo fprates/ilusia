@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <faclib.h>
-#include "ilusia.h"
+#include "../ilusia.h"
 #include "object.h"
 
 struct fac_lista *global_pool;

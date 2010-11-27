@@ -8,7 +8,8 @@
 #include <stdio.h>
 #include <faclib.h>
 #include <curses.h>
-#include "ilusia.h"
+#include "../ilusia.h"
+#include "object.h"
 
 void ils_start(struct ils_obj *game, struct ils_obj *cen)
 {

@@ -8,6 +8,8 @@
 #ifndef CONTROLS_H_
 #define CONTROLS_H_
 
+#include "../ilusia.h"
+
 extern void _term_control(struct ils_control *);
 
 

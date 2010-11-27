@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <faclib.h>
-#include "ilusia.h"
+#include "../ilusia.h"
 #include "object.h"
 #include "controls.h"
 
