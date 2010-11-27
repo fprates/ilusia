@@ -8,10 +8,18 @@
 #include <stdio.h>
 #include "ilusia.h"
 
-static void input(struct ils_obj *obj, struct ils_control *control,
-		struct ils_evento evento)
+static void input(struct ils_evento evento)
 {
-    printf("%s\n", ils_ret_name(obj));
+	switch(evento.key_code) {
+	case 'A':
+	case 'a':
+		break;
+
+	case 'D':
+	case 'd':
+		break;
+	}
+    printf("%s\n", ils_ret_name(evento.obj));
 }
 
 int main(void)

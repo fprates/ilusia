@@ -21,8 +21,7 @@ struct s_pool_item {
 struct ils_control {
     char *name;
     struct fac_lista *keys;
-    void (*input_proc)(struct ils_obj *, struct ils_control *,
-    		struct ils_evento);
+    void (*input_proc)(struct ils_evento);
 };
 
 struct s_key {
@@ -48,7 +47,7 @@ void ils_def_key(struct ils_control *control, int key)
 }
 
 void ils_def_input_proc(struct ils_control *control,
-        void (*input_proc)(struct ils_obj *, struct ils_control *, struct ils_evento))
+		void (*input_proc)(struct ils_evento))
 {
     control->input_proc = input_proc;
 }
@@ -79,14 +78,10 @@ int ils_verif_key_event(struct ils_obj *obj, int code)
 	return ret;
 }
 
-void ils_send_event(struct ils_obj *obj, int c)
+void ils_send_event(struct ils_obj *obj, struct ils_evento *evento)
 {
-	struct ils_evento evento;
 	struct ils_control *control = ils_ret_obj_control(obj);
-
-	evento.key_code = c;
-
-	control->input_proc(obj, control, evento);
+	control->input_proc(*evento);
 }
 
 void _term_control(struct ils_control *control)

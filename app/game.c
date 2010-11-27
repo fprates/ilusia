@@ -14,6 +14,7 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen)
 {
     int c;
 	struct ils_obj *obj_;
+	struct ils_evento evento;
     WINDOW *win = initscr();
 	struct fac_iterador *it = ils_ret_objs(cen);
 
@@ -26,8 +27,13 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen)
         fac_rst_iterador(it);
         while (fac_existe_prox(it)) {
             obj_ = fac_proximo(it);
-            if (ils_verif_key_event(obj_, c))
-            	ils_send_event(obj_, c);
+            if (!ils_verif_key_event(obj_, c))
+            	continue;
+
+            evento.obj = obj_;
+            evento.cen = cen;
+            evento.key_code = c;
+            ils_send_event(obj_, &evento);
         }
     }
 
