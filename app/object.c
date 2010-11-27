@@ -156,7 +156,7 @@ void ils_term_all(struct ils_obj *obj)
 	}
 
 	fac_rm_iterador(it);
-	fac_rm_lista(obj_->obj->objs);
+	fac_rm_lista(obj->objs);
 	term_controls(obj);
 
 	printf("i: objeto %s finalizado.\n", obj->name);
