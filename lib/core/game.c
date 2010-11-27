@@ -7,22 +7,21 @@
 
 #include <stdio.h>
 #include <faclib.h>
-#include <curses.h>
 #include "../ilusia.h"
 #include "object.h"
+#include "../devices/sdl.h"
 
 void ils_start(struct ils_obj *game, struct ils_obj *cen)
 {
     int c;
 	struct ils_obj *obj_;
 	struct ils_evento evento;
-    WINDOW *win = initscr();
 	struct fac_iterador *it = ils_ret_complex_objs(cen);
 
-	noecho();
-    cbreak();
+    _ini_output_device();
+
     for (;;) {
-    	c = getch();
+    	c = _ret_key_code();
         if (c == 27)
             break;
 
@@ -43,8 +42,8 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen)
         }
     }
 
-    endwin();
     fac_rm_iterador(it);
-    win = NULL;
+
+    _term_output_device();
 
 }
