@@ -11,6 +11,19 @@
 #include "../ilusia.h"
 #include "../devices/sdl.h"
 
+struct {
+    int ret;
+} _system;
+
+void ils_def_signal(int signal)
+{
+    switch (signal) {
+    case ILS_TERM:
+        _system.ret = 1;
+        break;
+    }
+}
+
 void ils_start(struct ils_obj *game, struct ils_obj *cen)
 {
     int c;
@@ -23,10 +36,10 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen)
         return;
     }
 
-    for (;;) {
+    _system.ret = 0;
+
+    while (!_system.ret) {
     	c = _ret_key_code();
-        if (c == 27)
-            break;
 
         fac_rst_iterador(it);
         while (fac_existe_prox(it)) {

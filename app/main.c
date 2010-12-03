@@ -10,7 +10,8 @@
 #include <SDL/SDL.h>
 #include "../lib/ilusia.h"
 
-enum actions {LEFT, RIGHT};
+enum actions {TERM, LEFT, RIGHT};
+
 struct ils_pos pos_;
 
 static void output(struct ils_view view)
@@ -32,6 +33,10 @@ static void input(struct ils_evento evento)
 		ils_def_relat_pos(evento.cen, evento.obj, 1, 0, 0);
 
 		break;
+
+    case TERM:
+        ils_def_signal(ILS_TERM);
+        break;
 	}
 }
 
@@ -66,10 +71,12 @@ int main(void)
     control1 = ils_def_control(game, "player 1");
     ils_def_key(control1, LEFT, SDLK_a);
     ils_def_key(control1, RIGHT, SDLK_d);
+    ils_def_key(control1, TERM, SDLK_ESCAPE);
 
     control2 = ils_def_control(game, "player 2");
     ils_def_key(control2, LEFT, SDLK_LEFT);
     ils_def_key(control2, RIGHT, SDLK_RIGHT);
+    ils_def_key(control2, TERM, SDLK_ESCAPE);
 
     ils_def_output_proc(joao, output);
     ils_def_output_proc(cao, output);

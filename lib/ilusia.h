@@ -8,6 +8,8 @@
 #ifndef ILUSIA_H_
 #define ILUSIA_H_
 
+enum ils_signal {ILS_TERM};
+
 struct ils_obj;
 struct ils_complex_obj;
 struct ils_control;
@@ -57,6 +59,7 @@ extern struct ils_control *ils_ret_obj_control(struct ils_obj *);
 extern int ils_ret_key_event(struct ils_obj *, int);
 extern void ils_send_event(struct ils_obj *, struct ils_evento *);
 
+extern void ils_def_signal(int);
 extern void ils_start(struct ils_obj *, struct ils_obj *);
 extern void ils_term(struct ils_obj *);
 extern void ils_term_all(struct ils_obj *);
