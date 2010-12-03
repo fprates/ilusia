@@ -36,6 +36,7 @@ static void input(struct ils_evento evento)
 
     case TERM:
         ils_def_signal(ILS_TERM);
+
         break;
 	}
 }
@@ -51,9 +52,7 @@ int main(void)
     struct ils_control *control2;
     struct ils_config config;
 
-    config.title = "Exemplo";
-    game = ils_ini(config);
-
+    game = ils_def_obj("exemplo");
     cenario = ils_def_obj("cenario");
     joao = ils_def_obj("joao");
     cao = ils_def_obj("cao");
@@ -68,12 +67,13 @@ int main(void)
     ils_def_pos(cao, cenario, 20, 1, 0);
     ils_def_pos(lata, cenario, 40, 1, 0);
 
-    control1 = ils_def_control(game, "player 1");
+    ils_ini_controls();
+    control1 = ils_def_control("player 1");
     ils_def_key(control1, LEFT, SDLK_a);
     ils_def_key(control1, RIGHT, SDLK_d);
     ils_def_key(control1, TERM, SDLK_ESCAPE);
 
-    control2 = ils_def_control(game, "player 2");
+    control2 = ils_def_control("player 2");
     ils_def_key(control2, LEFT, SDLK_LEFT);
     ils_def_key(control2, RIGHT, SDLK_RIGHT);
     ils_def_key(control2, TERM, SDLK_ESCAPE);
@@ -86,8 +86,15 @@ int main(void)
     ils_def_obj_control(joao, control1);
     ils_def_obj_control(cao, control2);
 
-    ils_start(game, cenario);
+    config.title = "Teste";
+    config.video.w = 800;
+    config.video.h = 600;
+    config.video.bpp = 24;
+
+    ils_start(game, cenario, config);
+
     ils_term_all(game);
+    ils_term_controls();
 
     printf("That's all, folks!\n");
 

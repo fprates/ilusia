@@ -10,6 +10,7 @@
 
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
+#include "../ilusia.h"
 
 #ifdef ILUSIA_LINUX
 #define ILSPREFIX
@@ -56,7 +57,7 @@ struct ils_sdl {
     SDL_Surface * SDLCALL (*IMG_Load)(const char *);
 };
 
-extern int _ini_devices(void);
+extern int _ini_devices(struct ils_config *);
 extern void _term_devices(void);
 extern int _ret_key_code(void);
 

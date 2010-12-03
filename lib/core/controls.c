@@ -11,12 +11,7 @@
 #include "../ilusia.h"
 #include "object.h"
 
-struct fac_lista *global_pool;
-
-struct s_pool_item {
-    struct ils_obj * game;
-    struct fac_lista *pool;
-};
+struct fac_lista *pool;
 
 struct ils_control {
     char *name;
@@ -29,12 +24,17 @@ struct s_key {
     int evcode;
 };
 
-struct ils_control *ils_def_control(struct ils_obj *game, char *name)
+void ils_ini_controls()
+{
+    pool = fac_ini_lista();
+}
+
+struct ils_control *ils_def_control(char *name)
 {
     struct ils_control *control = malloc(sizeof(*control));
     control->name = name;
     control->keys = fac_ini_lista();
-    _ins_control(game, control);
+    fac_inc_item(pool, control);
 
     printf("i: controle %s inicializado.\n", name);
     return control;
@@ -86,7 +86,7 @@ void ils_send_event(struct ils_obj *obj, struct ils_evento *evento)
 	control->input_proc(*evento);
 }
 
-void _term_control(struct ils_control *control)
+static void term_control(struct ils_control *control)
 {
 	struct fac_iterador *it;
 
@@ -102,4 +102,15 @@ void _term_control(struct ils_control *control)
 
 	printf("i: controle %s finalizado.\n", control->name);
 	free(control);
+}
+
+void ils_term_controls(void)
+{
+    struct fac_iterador *it = fac_ini_iterador(pool);
+
+    while (fac_existe_prox(it))
+        term_control(fac_proximo(it));
+
+    fac_rm_iterador(it);
+    fac_rm_lista(pool);
 }

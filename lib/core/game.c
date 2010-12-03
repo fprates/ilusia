@@ -12,33 +12,38 @@
 #include "../devices/sdl.h"
 
 struct {
+    struct ils_config *config;
     int ret;
-} _system;
+} system_;
 
 void ils_def_signal(int signal)
 {
     switch (signal) {
     case ILS_TERM:
-        _system.ret = 1;
+        system_.ret = 1;
         break;
     }
 }
 
-void ils_start(struct ils_obj *game, struct ils_obj *cen)
+void ils_start(struct ils_obj *game, struct ils_obj *cen,
+        struct ils_config config)
 {
     int c;
 	struct ils_obj *obj_;
 	struct ils_evento evento;
 	struct fac_iterador *it = ils_ret_complex_objs(cen);
 
-    if (_ini_devices() < 0) {
+	system_.config = &config;
+
+    if (_ini_devices(system_.config) < 0) {
         printf("e: erro na inicialização dos dispositivos.\n");
         return;
     }
 
-    _system.ret = 0;
+    printf("i: aguardando eventos...\n");
+    system_.ret = 0;
 
-    while (!_system.ret) {
+    while (!system_.ret) {
     	c = _ret_key_code();
 
         fac_rst_iterador(it);
