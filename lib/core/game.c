@@ -7,8 +7,8 @@
 
 #include <stdio.h>
 #include <faclib.h>
-#include "../ilusia.h"
 #include "object.h"
+#include "../ilusia.h"
 #include "../devices/sdl.h"
 
 void ils_start(struct ils_obj *game, struct ils_obj *cen)
@@ -18,7 +18,10 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen)
 	struct ils_evento evento;
 	struct fac_iterador *it = ils_ret_complex_objs(cen);
 
-    _ini_output_device();
+    if (_ini_devices() < 0) {
+        printf("e: erro na inicialização dos dispositivos.\n");
+        return;
+    }
 
     for (;;) {
     	c = _ret_key_code();
@@ -44,6 +47,6 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen)
 
     fac_rm_iterador(it);
 
-    _term_output_device();
+    _term_devices();
 
 }

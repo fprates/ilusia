@@ -6,13 +6,3 @@
  */
 
 #include "sdl.h"
-
-void _ini_output_device(void)
-{
-
-}
-
-void _term_output_device(void)
-{
-
-}

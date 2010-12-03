@@ -6,8 +6,8 @@
  */
 
 #include <stdio.h>
-#include <curses.h>
 #include <string.h>
+#include <SDL/SDL.h>
 #include "../lib/ilusia.h"
 
 enum actions {LEFT, RIGHT};
@@ -15,17 +15,7 @@ struct ils_pos pos_;
 
 static void output(struct ils_view view)
 {
-	struct ils_pos pos = ils_ret_obj_pos(view.cen, view.obj);
-	const char *name = ils_ret_name(view.obj);
 
-	move(pos_.y, pos_.x);
-	delch();
-	move(pos.y, pos.x);
-
-	if (strcmp(name, "joao") == 0)
-		insch('J');
-	else
-		insch('C');
 }
 
 static void input(struct ils_evento evento)
@@ -74,16 +64,12 @@ int main(void)
     ils_def_pos(lata, cenario, 40, 1, 0);
 
     control1 = ils_def_control(game, "player 1");
-    ils_def_key(control1, LEFT, 'A');
-    ils_def_key(control1, LEFT, 'a');
-    ils_def_key(control1, RIGHT, 'D');
-    ils_def_key(control1, RIGHT, 'd');
+    ils_def_key(control1, LEFT, SDLK_a);
+    ils_def_key(control1, RIGHT, SDLK_d);
 
     control2 = ils_def_control(game, "player 2");
-    ils_def_key(control2, LEFT, 'J');
-    ils_def_key(control2, LEFT, 'j');
-    ils_def_key(control2, RIGHT, 'L');
-    ils_def_key(control2, RIGHT, 'l');
+    ils_def_key(control2, LEFT, SDLK_LEFT);
+    ils_def_key(control2, RIGHT, SDLK_RIGHT);
 
     ils_def_output_proc(joao, output);
     ils_def_output_proc(cao, output);
