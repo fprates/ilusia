@@ -12,14 +12,14 @@
 #include <SDL/SDL_ttf.h>
 #include "../ilusia.h"
 
-#ifdef ILUSIA_LINUX
+#ifdef linux
 #define ILSPREFIX
 #define ILS_SDL "libSDL.so"
 #define ILS_TTF "libSDL_ttf.so"
 #define ILS_IMG "libSDL_image.so"
 #endif
 
-#ifdef ILUSIA_WIN32
+#ifdef __WIN32__
 #include <windows.h>
 #define ILS_SDL "SDL.dll"
 #define ILS_TTF "SDL_ttf.dll"

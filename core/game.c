@@ -60,6 +60,7 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
 
             ils_send_event(obj_, &evento);
             _call_output_proc(cen, obj_);
+            _output_commit();
         }
     }
 
