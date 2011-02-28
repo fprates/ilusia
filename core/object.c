@@ -35,6 +35,7 @@ struct ils_obj *ils_def_obj(const char *name)
 	obj->objs = fac_ini_lista();
 	obj->espec = NULL;
 	obj->control = NULL;
+	obj->proc_output = NULL;
 
 	printf("i: objeto %s gerado.\n", name);
 	return obj;
@@ -141,6 +142,9 @@ void ils_def_output_proc(struct ils_obj *obj,
 void _call_output_proc(struct ils_obj *cen, struct ils_obj *obj)
 {
 	struct ils_view view;
+
+	if (obj->proc_output == NULL)
+		return;
 
 	view.cen = cen;
 	view.obj = obj;

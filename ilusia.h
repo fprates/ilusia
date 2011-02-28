@@ -8,6 +8,8 @@
 #ifndef ILUSIA_H_
 #define ILUSIA_H_
 
+#include "render.h"
+
 enum ils_signal {ILS_TERM};
 
 struct ils_obj;
@@ -68,6 +70,8 @@ extern void ils_send_event(struct ils_obj *, struct ils_evento *);
 extern void ils_term_controls(void);
 
 extern struct ils_sdl *ils_ret_sdl_fncs(void);
+extern struct ils_gl *ils_ret_gl_fncs(void);
+
 extern void ils_def_signal(int);
 extern void ils_start(struct ils_obj *, struct ils_obj *, struct ils_config);
 extern void ils_term(struct ils_obj *);
