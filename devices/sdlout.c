@@ -9,11 +9,23 @@
 
 void _frame_start(void)
 {
+
+}
+
+void _push_state(void)
+{
 	struct ils_gl *gl = ils_ret_gl_fncs();
 
-    gl->glMatrixMode(GL_PROJECTION);
-    gl->glLoadIdentity();
+	gl->glPushMatrix();
 }
+
+void _pop_state(void)
+{
+	struct ils_gl *gl = ils_ret_gl_fncs();
+
+	gl->glPopMatrix();
+}
+
 void _output_commit(void)
 {
 	struct ils_sdl *sdl = ils_ret_sdl_fncs();

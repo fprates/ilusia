@@ -22,9 +22,40 @@ struct ils_video {
     unsigned int bpp;
 };
 
+struct ils_pos {
+	float x;
+	float y;
+	float z;
+	float w;
+	float h;
+	float d;
+};
+
+struct ils_persp {
+    float fovy;
+    float aspec;
+    float zprox;
+    float zdist;
+};
+
+struct ils_camera {
+    float obsx;
+    float obsy;
+    float obsz;
+    float objx;
+    float objy;
+    float objz;
+    float vupx;
+    float vupy;
+    float vupz;
+};
+
 struct ils_config {
     char *title;
     struct ils_video video;
+    struct ils_pos view;
+    struct ils_persp persp;
+    struct ils_camera camera;
 };
 
 struct ils_view {
@@ -37,12 +68,6 @@ struct ils_evento {
 	struct ils_obj *cen;
 	int key_code;
 	int evcode;
-};
-
-struct ils_pos {
-	float x;
-	float y;
-	float z;
 };
 
 extern struct ils_obj *ils_def_obj(const char *);

@@ -38,5 +38,7 @@ extern void _term_devices(void);
 extern int _ret_key_code(void);
 extern void _frame_start(void);
 extern void _output_commit(void);
+extern void _pop_state(void);
+extern void _push_state(void);
 
 #endif /* SDLOUT_H_ */

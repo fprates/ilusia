@@ -48,14 +48,18 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
 
     	_frame_start();
 
+    	_push_state();
     	_call_output_proc(cen, cen);
+    	_pop_state();
 
         fac_rst_iterador(it);
         while (fac_existe_prox(it)) {
             obj_ = ils_ret_obj_from_complex(fac_proximo(it));
             evento.evcode = ils_ret_key_event(obj_, c);
 
+            _push_state();
             _call_output_proc(cen, obj_);
+            _pop_state();
 
             if (evento.evcode == -1)
             	continue;

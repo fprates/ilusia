@@ -20,6 +20,8 @@ static struct s_sdl {
 
 static int ini_video(struct ils_config *config, struct s_sdl *sdl_)
 {
+	struct ils_gl *gl = &sdl_->gl;
+
     sdl_->screen = sdl_->fnc.SDL_SetVideoMode(
             config->video.w,
             config->video.h,
@@ -29,6 +31,22 @@ static int ini_video(struct ils_config *config, struct s_sdl *sdl_)
 
     if (sdl_->screen == NULL)
         return -1;
+
+    gl->glViewport(
+    		config->view.x, config->view.y, config->view.w, config->view.h);
+
+    gl->glMatrixMode(GL_PROJECTION);
+    gl->glLoadIdentity();
+
+    gl->gluPerspective(config->persp.fovy, config->persp.aspec,
+    		config->persp.zprox, config->persp.zdist);
+
+    gl->gluLookAt(config->camera.obsx, config->camera.obsy, config->camera.obsz,
+    		config->camera.objx, config->camera.objy, config->camera.objz,
+    		config->camera.vupx, config->camera.vupy, config->camera.vupz);
+
+    gl->glMatrixMode(GL_MODELVIEW);
+    gl->glLoadIdentity();
 
     return 0;
 }
