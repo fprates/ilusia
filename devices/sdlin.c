@@ -7,18 +7,29 @@
 
 #include "sdl.h"
 
-int _ret_key_code(void)
+struct ils_key_press _ret_key_pressed(void)
 {
     SDL_Event event;
+    struct ils_key_press key_press;
     struct ils_sdl *sdl = ils_ret_sdl_fncs();
 
-    while (sdl->SDL_PollEvent(&event)) {
-        if (event.type != SDL_KEYDOWN)
-            continue;
+    key_press.code = -1;
+    key_press.pressed = -1;
 
-        return event.key.keysym.sym;
+    if (sdl->SDL_PollEvent(&event)) {
+        key_press.code = event.key.keysym.sym;
+        switch (event.type) {
+        case SDL_KEYDOWN:
+            key_press.pressed = 1;
+            break;
+
+        case SDL_KEYUP:
+            key_press.pressed = 0;
+            break;
+
+        }
     }
 
-    return 0;
+    return key_press;
 }
 

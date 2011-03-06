@@ -28,7 +28,7 @@ void ils_def_signal(int signal)
 void ils_start(struct ils_obj *game, struct ils_obj *cen,
         struct ils_config config)
 {
-    int c;
+    struct ils_key_press key_press;
 	struct ils_obj *obj_;
 	struct ils_evento evento;
 	struct fac_iterador *it = ils_ret_complex_objs(cen);
@@ -44,7 +44,7 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
     system_.ret = 0;
 
     while (!system_.ret) {
-    	c = _ret_key_code();
+    	key_press = _ret_key_pressed();
 
     	_frame_start();
 
@@ -55,7 +55,8 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
         fac_rst_iterador(it);
         while (fac_existe_prox(it)) {
             obj_ = ils_ret_obj_from_complex(fac_proximo(it));
-            evento.evcode = ils_ret_key_event(obj_, c);
+
+            evento.evcode = ils_ret_key_event(obj_, &key_press);
 
             _push_state();
             _call_output_proc(cen, obj_);
@@ -66,7 +67,7 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
 
             evento.obj = obj_;
             evento.cen = cen;
-            evento.key_code = c;
+            evento.key_code = key_press.code;
 
             ils_send_event(obj_, &evento);
         }

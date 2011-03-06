@@ -70,6 +70,15 @@ struct ils_evento {
 	int evcode;
 };
 
+struct ils_key_press {
+    SDLKey code;
+    int pressed;
+};
+
+enum ils_keypress {
+    SINGLE, CONTINUOUS
+};
+
 extern struct ils_obj *ils_def_obj(const char *);
 extern void ils_inc_obj(struct ils_obj *, struct ils_obj *);
 extern struct fac_iterador *ils_ret_complex_objs(struct ils_obj *);
@@ -85,12 +94,12 @@ extern void ils_def_output_proc(struct ils_obj *, void (*)(struct ils_view));
 
 extern void ils_ini_controls(void);
 extern struct ils_control *ils_def_control(char *);
-extern void ils_def_key(struct ils_control *, int, int);
+extern void ils_def_key(struct ils_control *, int, int, enum ils_keypress);
 extern void ils_def_input_proc(struct ils_control *,
 		void (*)(struct ils_evento));
 extern void ils_def_obj_control(struct ils_obj *, struct ils_control *);
 extern struct ils_control *ils_ret_obj_control(struct ils_obj *);
-extern int ils_ret_key_event(struct ils_obj *, int);
+extern int ils_ret_key_event(struct ils_obj *, struct ils_key_press *);
 extern void ils_send_event(struct ils_obj *, struct ils_evento *);
 extern void ils_term_controls(void);
 

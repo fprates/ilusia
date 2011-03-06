@@ -35,7 +35,7 @@
 
 extern int _ini_devices(struct ils_config *);
 extern void _term_devices(void);
-extern int _ret_key_code(void);
+extern struct ils_key_press _ret_key_pressed(void);
 extern void _frame_start(void);
 extern void _output_commit(void);
 extern void _pop_state(void);
