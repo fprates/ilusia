@@ -41,6 +41,20 @@ struct ils_obj *ils_def_obj(const char *name)
 	return obj;
 }
 
+void ils_def_obj_espec(struct ils_obj *obj, void *espec)
+{
+    obj->espec = espec;
+}
+
+void *ils_ret_obj_espec(struct ils_obj *obj)
+{
+    return obj->espec;
+}
+
+const char *ils_ret_obj_name(struct ils_obj *obj)
+{
+    return obj->name;
+}
 
 void ils_inc_obj(struct ils_obj *orig, struct ils_obj *dest)
 {

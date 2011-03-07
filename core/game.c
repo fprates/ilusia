@@ -29,7 +29,9 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
         struct ils_config config)
 {
     struct ils_key_press key_press;
+    struct ils_key *key;
 	struct ils_obj *obj_;
+	struct ils_obj *timer;
 	struct ils_evento evento;
 	struct fac_iterador *it = ils_ret_complex_objs(cen);
 
@@ -56,18 +58,34 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
         while (fac_existe_prox(it)) {
             obj_ = ils_ret_obj_from_complex(fac_proximo(it));
 
-            evento.evcode = ils_ret_key_event(obj_, &key_press);
+            key = ils_ret_key_event(obj_, &key_press);
 
             _push_state();
             _call_output_proc(cen, obj_);
             _pop_state();
 
-            if (evento.evcode == -1)
+            if (key == NULL)
             	continue;
 
+            evento.evcode = ils_ret_event_code(key);
             evento.obj = obj_;
             evento.cen = cen;
             evento.key_code = key_press.code;
+
+            timer = ils_ret_key_timer(key);
+
+            if (timer != NULL) {
+                if (ils_is_timer_stopped(timer)) {
+                    ils_start_timer(timer);
+                    continue;
+                }
+
+
+                if (!ils_ret_timer_mrk(timer))
+                    continue;
+                else
+                    ils_reset_timer_cnt(timer);
+            }
 
             ils_send_event(obj_, &evento);
         }

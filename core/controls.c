@@ -19,11 +19,12 @@ struct ils_control {
     void (*input_proc)(struct ils_evento);
 };
 
-struct s_key {
+struct ils_key {
     int code;
     int evcode;
     enum ils_keypress mode;
     int active;
+    struct ils_obj *timer;
 };
 
 void ils_ini_controls()
@@ -42,16 +43,34 @@ struct ils_control *ils_def_control(char *name)
     return control;
 }
 
-void ils_def_key(struct ils_control *control, int evcode, int key, enum ils_keypress mode)
+struct ils_key *ils_def_key(struct ils_control *control, int evcode, int key, enum ils_keypress mode)
 {
-    struct s_key *key_ = malloc(sizeof(*key_));
+    struct ils_key *key_ = malloc(sizeof(*key_));
 
     key_->code = key;
     key_->evcode = evcode;
     key_->mode = mode;
     key_->active = 0;
+    key_->timer = NULL;
 
     fac_inc_item(control->keys, key_);
+
+    return key_;
+}
+
+int ils_ret_event_code(struct ils_key *key)
+{
+    return key->evcode;
+}
+
+void ils_def_key_timer(struct ils_key *key, unsigned int time)
+{
+    key->timer = ils_def_timer("key_timer", time);
+}
+
+struct ils_obj *ils_ret_key_timer(struct ils_key *key)
+{
+    return key->timer;
 }
 
 void ils_def_input_proc(struct ils_control *control,
@@ -60,34 +79,33 @@ void ils_def_input_proc(struct ils_control *control,
     control->input_proc = input_proc;
 }
 
-int ils_ret_key_event(struct ils_obj *obj, struct ils_key_press *key_press)
+struct ils_key *ils_ret_key_event(struct ils_obj *obj, struct ils_key_press *key_press)
 {
-    int ret = -1;
-	struct s_key *key;
 	struct fac_iterador *it;
+    struct ils_key *key = NULL;
 	struct ils_control *control = ils_ret_obj_control(obj);
 
 	if (control == NULL)
-	    return -1;
+	    return NULL;
 
 	it = fac_ini_iterador(control->keys);
 
 	while (fac_existe_prox(it)) {
 		key = fac_proximo(it);
 
-		if ((key->code != key_press->code) && (key->active == 0))
+		if ((key->code != key_press->code) && (key->active == 0)) {
+		    key = NULL;
 			continue;
+		}
 
 		switch (key->mode) {
-		case SINGLE:
-            ret = key->evcode;
-		    break;
-
-		case CONTINUOUS:
+		case ILS_CONTINUOUS:
 		    if ((key->code == key_press->code) && (key_press->pressed != -1))
 		        key->active = key_press->pressed;
 
-            ret = key->evcode;
+		    break;
+
+		default:
 		    break;
 		}
 
@@ -95,7 +113,8 @@ int ils_ret_key_event(struct ils_obj *obj, struct ils_key_press *key_press)
 	}
 
 	fac_rm_iterador(it);
-	return ret;
+
+	return key;
 }
 
 void ils_send_event(struct ils_obj *obj, struct ils_evento *evento)
@@ -107,13 +126,18 @@ void ils_send_event(struct ils_obj *obj, struct ils_evento *evento)
 static void term_control(struct ils_control *control)
 {
 	struct fac_iterador *it;
+	struct ils_key *key;
 
 	if (control == NULL)
 		return;
 
 	it = fac_ini_iterador(control->keys);
-	while (fac_existe_prox(it))
-		free(fac_proximo(it));
+	while (fac_existe_prox(it)) {
+	    key = fac_proximo(it);
+	    ils_term_timer(key->timer);
+
+		free(key);
+	}
 
 	fac_rm_iterador(it);
 	fac_rm_lista(control->keys);
