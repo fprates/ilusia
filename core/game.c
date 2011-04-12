@@ -42,6 +42,8 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
         return;
     }
 
+    ils_def_img();
+
     printf("i: aguardando eventos...\n");
     system_.ret = 0;
 

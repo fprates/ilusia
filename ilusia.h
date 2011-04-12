@@ -77,9 +77,13 @@ struct ils_key_press {
 
 struct ils_key;
 
+struct ils_texture;
+
 enum ils_keypress {
     ILS_SINGLE, ILS_CONTINUOUS
 };
+
+extern void ils_ini(void);
 
 extern struct ils_obj *ils_def_obj(const char *);
 
@@ -158,5 +162,13 @@ extern void ils_start(struct ils_obj *, struct ils_obj *, struct ils_config);
 extern void ils_term(struct ils_obj *);
 
 extern void ils_term_all(struct ils_obj *);
+
+extern void ils_ini_textures(void);
+
+extern struct ils_texture *ils_texture_inc(char *id, char *path);
+
+extern void ils_assign_texture(struct ils_obj *obj, struct ils_texture *texture);
+
+extern void ils_def_img(void);
 
 #endif /* ILUSIA_H_ */
