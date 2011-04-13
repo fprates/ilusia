@@ -109,8 +109,8 @@ extern void ils_def_dim(struct ils_obj *obj, float w, float h, float d);
 
 extern struct ils_obj *ils_ret_obj_from_complex(struct ils_complex_obj *);
 
-extern void ils_def_relat_pos(struct ils_obj *, struct ils_obj *,
-		float, float, float);
+extern void ils_def_relat_pos(struct ils_obj *orig, struct ils_obj *dest,
+		float x, float y, float z);
 
 extern struct ils_pos ils_ret_obj_pos(
         struct ils_obj *obj, struct ils_obj *cen);

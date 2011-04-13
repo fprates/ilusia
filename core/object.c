@@ -130,25 +130,17 @@ void ils_def_dim(struct ils_obj *obj, float w, float h, float d)
     obj->pos.dd = d;
 }
 
-void ils_def_relat_pos(struct ils_obj *dest, struct ils_obj *orig,
+void ils_def_relat_pos(struct ils_obj *orig, struct ils_obj *dest,
 		float x, float y, float z)
 {
-	struct ils_complex_obj *obj;
-	struct fac_iterador *it = fac_ini_iterador(dest->objs);
+    struct ils_complex_obj *obj = ret_obj_from_cen(orig, dest);
 
-	while (fac_existe_prox(it)) {
-		obj = fac_proximo(it);
+    if (obj == NULL)
+        return;
 
-		if (obj->obj != orig)
-			continue;
-
-		obj->pos.x += x;
-		obj->pos.y += y;
-		obj->pos.z += z;
-		break;
-	}
-
-	fac_rm_iterador(it);
+    obj->pos.x += x;
+    obj->pos.y += y;
+    obj->pos.z += z;
 }
 
 struct ils_pos ils_ret_obj_pos(struct ils_obj *orig, struct ils_obj *dest)
