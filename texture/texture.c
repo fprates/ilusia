@@ -24,12 +24,10 @@ struct s_link {
 };
 
 struct fac_lista *textures;
-struct fac_lista *links;
 
 void ils_ini_textures(void)
 {
     textures = fac_ini_lista();
-    links = fac_ini_lista();
 }
 
 struct ils_texture *ils_texture_inc(char *id, char *path)
@@ -41,16 +39,6 @@ struct ils_texture *ils_texture_inc(char *id, char *path)
     fac_inc_item(textures, texture);
 
     return texture;
-}
-
-void ils_assign_texture(struct ils_obj * obj, struct ils_texture *texture)
-{
-    struct s_link *link = malloc(sizeof(*link));
-
-    link->obj = obj;
-    link->texture = texture;
-
-    fac_inc_item(links, link);
 }
 
 static unsigned int next_power_of_2(unsigned int x)
@@ -90,7 +78,8 @@ static char def_texture(char *name, SDL_Surface *surface)
     texture->a = next_power_of_2(surface->h);
     sdl->SDL_UnlockSurface(surface);
 
-    new_surface = sdl->SDL_CreateRGBSurface(0, texture->l, texture->a, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
+    new_surface = sdl->SDL_CreateRGBSurface(0, texture->l, texture->a, 32,
+            0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
     sdl->SDL_BlitSurface(surface, 0, new_surface, 0);
 
     gl->glGenTextures(1, &texture->id);
@@ -145,4 +134,27 @@ void ils_def_img(void)
                 break;
             }
     }
+}
+
+void ils_show_texture(struct ils_texture *texture, struct ils_pos *pos)
+{
+    struct ils_gl *gl = ils_ret_gl_fncs();
+
+    gl->glEnable(GL_TEXTURE_2D);
+    gl->glBindTexture(GL_TEXTURE_2D, texture->id);
+    gl->glPushMatrix();
+    gl->glTranslatef(pos->x, pos->y, pos->z);
+    gl->glScalef(pos->sw, pos->sh, 1);
+    gl->glBegin(GL_QUADS);
+        gl->glTexCoord2f(0, 1);
+        gl->glVertex3f(0, 0, 0);
+        gl->glTexCoord2f(1, 1);
+        gl->glVertex3f(pos->dw, 0, 0);
+        gl->glTexCoord2f(1, 0);
+        gl->glVertex3f(pos->dw, pos->dh, 0);
+        gl->glTexCoord2f(0, 0);
+        gl->glVertex3f(0, pos->dh, 0);
+    gl->glEnd();
+    gl->glPopMatrix();
+    gl->glDisable(GL_TEXTURE_2D);
 }

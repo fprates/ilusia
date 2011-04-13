@@ -33,7 +33,7 @@ static int ini_video(struct ils_config *config, struct s_sdl *sdl_)
         return -1;
 
     gl->glViewport(
-    		config->view.x, config->view.y, config->view.w, config->view.h);
+    		config->view.x, config->view.y, config->view.dw, config->view.dh);
 
     gl->glMatrixMode(GL_PROJECTION);
     gl->glLoadIdentity();

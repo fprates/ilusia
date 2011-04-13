@@ -26,9 +26,12 @@ struct ils_pos {
 	float x;
 	float y;
 	float z;
-	float w;
-	float h;
-	float d;
+	float sw;
+	float sh;
+	float sd;
+    float dw;
+    float dh;
+    float dd;
 };
 
 struct ils_persp {
@@ -131,7 +134,8 @@ extern void ils_def_obj_control(struct ils_obj *, struct ils_control *);
 
 extern struct ils_control *ils_ret_obj_control(struct ils_obj *);
 
-extern struct ils_key *ils_ret_key_event(struct ils_obj *, struct ils_key_press *);
+extern struct ils_key *ils_ret_key_event(
+        struct ils_obj *, struct ils_key_press *);
 
 extern void ils_send_event(struct ils_obj *, struct ils_evento *);
 
@@ -165,10 +169,10 @@ extern void ils_term_all(struct ils_obj *);
 
 extern void ils_ini_textures(void);
 
-extern struct ils_texture *ils_texture_inc(char *id, char *path);
-
-extern void ils_assign_texture(struct ils_obj *obj, struct ils_texture *texture);
+extern struct ils_texture *ils_texture_inc(char *name, char *path);
 
 extern void ils_def_img(void);
+
+extern void ils_show_texture(struct ils_texture *texture, struct ils_pos *pos);
 
 #endif /* ILUSIA_H_ */
