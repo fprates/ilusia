@@ -17,6 +17,7 @@ struct ils_obj {
 	struct ils_control *control;
 	void (*proc_output)(struct ils_view);
     void *espec;
+    struct ils_pos pos;
 };
 
 struct s_game {
@@ -90,20 +91,43 @@ struct ils_control *ils_ret_obj_control(struct ils_obj *obj)
 	return obj->control;
 }
 
-void ils_def_pos(struct ils_obj *obj, struct ils_obj *cen, float x, float y, float z)
+static struct ils_complex_obj *ret_obj_from_cen(struct ils_obj *obj, struct ils_obj *cen)
 {
-	struct ils_complex_obj *obj_;
-	struct fac_iterador *it = fac_ini_iterador(cen->objs);
+    struct ils_complex_obj *obj_ = NULL;
+    struct fac_iterador *it = fac_ini_iterador(cen->objs);
 
-	while (fac_existe_prox(it)) {
-		obj_ = fac_proximo(it);
+    while (fac_existe_prox(it)) {
+        obj_ = fac_proximo(it);
 
-		obj_->pos.x = x;
-		obj_->pos.y = y;
-		obj_->pos.z = z;
-	}
+        if (obj_->obj == obj)
+            break;
 
-	fac_rm_iterador(it);
+        obj_ = NULL;
+    }
+
+    fac_rm_iterador(it);
+
+    return obj_;
+}
+
+void ils_def_pos(struct ils_obj *obj, struct ils_obj *cen,
+        float x, float y, float z)
+{
+	struct ils_complex_obj *obj_ = ret_obj_from_cen(obj, cen);
+
+	if (obj_ == NULL)
+	    return;
+
+    obj_->pos.x = x;
+    obj_->pos.y = y;
+    obj_->pos.z = z;
+}
+
+void ils_def_dim(struct ils_obj *obj, float w, float h, float d)
+{
+    obj->pos.dw = w;
+    obj->pos.dh = h;
+    obj->pos.dd = d;
 }
 
 void ils_def_relat_pos(struct ils_obj *dest, struct ils_obj *orig,
@@ -127,24 +151,19 @@ void ils_def_relat_pos(struct ils_obj *dest, struct ils_obj *orig,
 	fac_rm_iterador(it);
 }
 
-struct ils_pos ils_ret_obj_pos(struct ils_obj *dest, struct ils_obj *orig)
+struct ils_pos ils_ret_obj_pos(struct ils_obj *orig, struct ils_obj *dest)
 {
-	struct ils_complex_obj *obj;
-	struct ils_pos pos;
-	struct fac_iterador *it = fac_ini_iterador(dest->objs);
+    struct ils_pos pos = {0};
+	struct ils_complex_obj *obj = ret_obj_from_cen(orig, dest);
 
-	while (fac_existe_prox(it)) {
-		obj = fac_proximo(it);
+	if (obj == NULL)
+	    return pos;
 
-		if (obj->obj != orig)
-			continue;
+	obj->pos.dw = obj->obj->pos.dw;
+	obj->pos.dh = obj->obj->pos.dh;
+	obj->pos.dd = obj->obj->pos.dd;
 
-		pos = obj->pos;
-		break;
-	}
-
-	fac_rm_iterador(it);
-	return pos;
+	return obj->pos;
 }
 
 void ils_def_output_proc(struct ils_obj *obj,
