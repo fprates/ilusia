@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include <setjmp.h>
 #include <faclib.h>
 #include <math.h>
 #include <jpeglib.h>
@@ -36,11 +37,19 @@ struct s_image {
     unsigned char *data;
 };
 
-static struct fac_lista *textures;
+struct s_jpeg_err_manager {
+	struct jpeg_error_mgr pub;
+	jmp_buf jmpbuf;
+};
+
+static struct s_global {
+	struct fac_lista *textures;
+	struct s_jpeg_err_manager jpeg_err;
+} global;
 
 void ils_ini_textures(void)
 {
-    textures = fac_ini_lista();
+    global.textures = fac_ini_lista();
 }
 
 struct ils_texture *ils_texture_inc(char *id, char *path)
@@ -53,7 +62,8 @@ struct ils_texture *ils_texture_inc(char *id, char *path)
     texture->g = 1.0f;
     texture->b = 1.0f;
     texture->a = 1.0f;
-    fac_inc_item(textures, texture);
+    texture->id = 0;
+    fac_inc_item(global.textures, texture);
 
     return texture;
 }
@@ -75,7 +85,7 @@ static char def_texture(char *name, struct s_image *image)
     if (image->data == NULL)
         return 1;
 
-    it = fac_ini_iterador(textures);
+    it = fac_ini_iterador(global.textures);
     while (fac_existe_prox(it)) {
         texture = fac_proximo(it);
         if (strcmp(texture->name, name) == 0)
@@ -114,6 +124,12 @@ static char def_texture(char *name, struct s_image *image)
     return 0;
 }
 
+static void jpeg_error_exit_handler(j_common_ptr cinfo)
+{
+	jpeg_destroy(cinfo);
+	longjmp(global.jpeg_err.jmpbuf, 1);
+}
+
 static void image_load(struct s_image *image)
 {
     struct jpeg_decompress_struct cinfo;
@@ -121,16 +137,29 @@ static void image_load(struct s_image *image)
     unsigned int row_span;
     unsigned int rows_read;
     JSAMPARRAY buffer;
-    FILE *fd = fopen(image->path, "rb");
+    FILE *fd = NULL;
+
+    cinfo.err = jpeg_std_error(&err);
+    cinfo.err->error_exit = &jpeg_error_exit_handler;
+
+    jpeg_create_decompress(&cinfo);
+
+	if (setjmp(global.jpeg_err.jmpbuf)) {
+		if (image->data != NULL) {
+			free(image->data);
+			image->data = NULL;
+		}
+
+		return;
+	}
 
     image->data = NULL;
+
+    fd = fopen(image->path, "rb");
 
     if (fd == NULL)
         return;
 
-    cinfo.err = jpeg_std_error(&err);
-
-    jpeg_create_decompress(&cinfo);
     jpeg_stdio_src(&cinfo, fd);
     jpeg_read_header(&cinfo, TRUE);
     jpeg_start_decompress(&cinfo);
@@ -160,7 +189,7 @@ static void image_load(struct s_image *image)
 void ils_def_img(void)
 {
     struct ils_texture *texture;
-    struct fac_iterador *it = fac_ini_iterador(textures);
+    struct fac_iterador *it = fac_ini_iterador(global.textures);
     struct s_image image;
 
     while (fac_existe_prox(it)) {
@@ -198,11 +227,13 @@ void ils_show_texture(struct ils_texture *texture, struct ils_pos *pos,
 {
     struct ils_gl *gl = ils_ret_gl_fncs();
 
-    gl->glEnable(GL_TEXTURE_2D);
-    gl->glBindTexture(GL_TEXTURE_2D, texture->id);
+    if (texture->id > 0) {
+		gl->glEnable(GL_TEXTURE_2D);
+		gl->glBindTexture(GL_TEXTURE_2D, texture->id);
+    }
 
     gl->glPushMatrix();
-    if (mode == INVERT)
+    if ((mode == INVERT) && (texture->id > 0))
     	gl->glRotatef(180, 1, 0, 0);
 
     gl->glColor4f(texture->r, texture->g, texture->b, texture->a);
@@ -216,5 +247,6 @@ void ils_show_texture(struct ils_texture *texture, struct ils_pos *pos,
     gl->glEnd();
     gl->glPopMatrix();
 
-    gl->glDisable(GL_TEXTURE_2D);
+    if (texture->id > 0)
+    	gl->glDisable(GL_TEXTURE_2D);
 }
