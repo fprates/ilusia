@@ -21,6 +21,7 @@ struct ils_gl {
     void APIENTRY (*glClear)(GLbitfield);
     void APIENTRY (*glClearColor)(GLclampf, GLclampf, GLclampf, GLclampf);
     void APIENTRY (*glColor3f)(GLfloat, GLfloat, GLfloat);
+    void APIENTRY (*glColor4f)(GLfloat, GLfloat, GLfloat, GLfloat);
     void APIENTRY (*glDisable)(GLenum);
     void APIENTRY (*glEnable)(GLenum);
     void APIENTRY (*glEnd)(void);
@@ -29,6 +30,7 @@ struct ils_gl {
     void APIENTRY (*glOrtho)(GLdouble, GLdouble, GLdouble,
     		GLdouble, GLdouble, GLdouble);
     void APIENTRY (*glPixelStoref)(GLenum, GLfloat);
+    void APIENTRY (*glPixelStorei)(GLenum, GLint);
     void APIENTRY (*glPopMatrix)(void);
     void APIENTRY (*glPushMatrix)(void);
     void APIENTRY (*glRotatef)(GLfloat, GLfloat, GLfloat, GLfloat);
@@ -41,6 +43,8 @@ struct ils_gl {
     void APIENTRY (*glBindTexture)(GLenum, GLuint);
     void APIENTRY (*glTexParameterf)(GLenum, GLenum, GLfloat);
     void APIENTRY (*glTexParameteri)(GLenum, GLenum, GLint);
+    void APIENTRY (*glTexGeni)(GLenum, GLenum, GLint);
+    void APIENTRY (*glTexGenfv)(GLenum, GLenum, const GLfloat *);
     void APIENTRY (*glTexImage2D)(GLenum, GLint, GLint, GLsizei, GLsizei,
     		GLint, GLenum, GLenum, const GLvoid *);
     void APIENTRY (*glTexCoord2f)(GLfloat, GLfloat);
@@ -51,6 +55,8 @@ struct ils_gl {
     		GLdouble, GLdouble, GLdouble, GLdouble, GLdouble, GLdouble);
     void APIENTRY (*gluOrtho2D)(GLdouble, GLdouble, GLdouble, GLdouble);
     void APIENTRY (*gluPerspective)(GLdouble, GLdouble, GLdouble, GLdouble);
+    void APIENTRY (*gluBuild2DMipmaps)(
+            GLenum, GLint, GLsizei, GLsizei, GLenum, GLenum, const void *);
 };
 
 struct ils_sdl {
