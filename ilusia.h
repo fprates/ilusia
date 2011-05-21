@@ -12,6 +12,14 @@
 
 enum ils_signal {ILS_TERM};
 
+enum ils_keypress {
+    ILS_SINGLE, ILS_CONTINUOUS
+};
+
+enum ils_e_texture {
+	DONT_INVERT, INVERT
+};
+
 struct ils_obj;
 struct ils_complex_obj;
 struct ils_control;
@@ -81,10 +89,6 @@ struct ils_key_press {
 struct ils_key;
 
 struct ils_texture;
-
-enum ils_keypress {
-    ILS_SINGLE, ILS_CONTINUOUS
-};
 
 extern void ils_ini(void);
 
@@ -176,6 +180,7 @@ extern struct ils_texture *ils_texture_inc(char *name, char *path);
 
 extern void ils_def_img(void);
 
-extern void ils_show_texture(struct ils_texture *texture, struct ils_pos *pos);
+extern void ils_show_texture(struct ils_texture *texture, struct ils_pos *pos,
+		unsigned int mode);
 
 #endif /* ILUSIA_H_ */

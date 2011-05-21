@@ -193,7 +193,8 @@ void ils_def_img(void)
     }
 }
 
-void ils_show_texture(struct ils_texture *texture, struct ils_pos *pos)
+void ils_show_texture(struct ils_texture *texture, struct ils_pos *pos,
+		unsigned int mode)
 {
     struct ils_gl *gl = ils_ret_gl_fncs();
 
@@ -201,6 +202,9 @@ void ils_show_texture(struct ils_texture *texture, struct ils_pos *pos)
     gl->glBindTexture(GL_TEXTURE_2D, texture->id);
 
     gl->glPushMatrix();
+    if (mode == INVERT)
+    	gl->glRotatef(180, 1, 0, 0);
+
     gl->glColor4f(texture->r, texture->g, texture->b, texture->a);
     gl->glTranslatef(pos->x, pos->y, pos->z);
     gl->glScalef(pos->sw, pos->sh, 1);
