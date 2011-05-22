@@ -6,6 +6,7 @@
  */
 
 #include <stdio.h>
+#include <png.h>
 #include <setjmp.h>
 #include <faclib.h>
 #include <math.h>
@@ -34,7 +35,7 @@ struct s_image {
     unsigned int n_comp;
     unsigned int w;
     unsigned int h;
-    unsigned char *data;
+    void *data;
 };
 
 struct s_jpeg_err_manager {
@@ -66,13 +67,6 @@ struct ils_texture *ils_texture_inc(char *id, char *path)
     fac_inc_item(global.textures, texture);
 
     return texture;
-}
-
-static unsigned int next_power_of_2(unsigned int x)
-{
-    double logbase2 = log(x)/log(2);
-
-    return round(pow(2,ceil(logbase2)));
 }
 
 static char def_texture(char *name, struct s_image *image)
@@ -130,14 +124,104 @@ static void jpeg_error_exit_handler(j_common_ptr cinfo)
 	longjmp(global.jpeg_err.jmpbuf, 1);
 }
 
-static void image_load(struct s_image *image)
+static int load_png(FILE *fd, struct s_image *image)
+{
+	const unsigned int PNG_ID_SIZE = 8;
+	png_byte pngid;
+	png_structp png_ptr;
+	png_infop info_ptr;
+	png_infop end_info;
+	png_bytep *row_ptrs;
+	png_uint_32 bitdep;
+	png_uint_32 color_type;
+	png_uint_32 channels;
+	unsigned int i;
+	unsigned int q;
+	unsigned int stride;
+
+	if (fread(&pngid, 1, PNG_ID_SIZE, fd) == 0)
+		return 0;
+
+	if (png_sig_cmp(&pngid, 0, PNG_ID_SIZE))
+		return 0;
+
+	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+
+	if (!png_ptr)
+		return 0;
+
+	info_ptr = png_create_info_struct(png_ptr);
+	if (!info_ptr) {
+		png_destroy_read_struct(&png_ptr, NULL, NULL);
+		return 0;
+	}
+
+	end_info = png_create_info_struct(png_ptr);
+	if (!end_info) {
+		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+		return 0;
+	}
+
+	png_init_io(png_ptr, fd);
+	png_set_sig_bytes(png_ptr, PNG_ID_SIZE);
+	png_read_info(png_ptr, info_ptr);
+
+	image->h = png_get_image_height(png_ptr, info_ptr);
+	image->w = png_get_image_width(png_ptr, info_ptr);
+    bitdep = png_get_bit_depth(png_ptr, info_ptr);
+    channels = png_get_channels(png_ptr, info_ptr);
+    color_type = png_get_color_type(png_ptr, info_ptr);
+
+	switch (color_type) {
+    case PNG_COLOR_TYPE_PALETTE:
+        png_set_palette_to_rgb(png_ptr);
+
+        channels = 3;
+        image->n_comp = 0;
+
+        break;
+
+    case PNG_COLOR_TYPE_GRAY:
+        if (bitdep < 8)
+        	png_set_gray_1_2_4_to_8(png_ptr);
+
+        bitdep = 8;
+        image->n_comp = 1;
+
+        break;
+	}
+
+	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
+		png_set_tRNS_to_alpha(png_ptr);
+		channels++;
+	}
+
+	if (bitdep == 16)
+        png_set_strip_16(png_ptr);
+
+    row_ptrs = malloc(sizeof(png_bytep) * image->h);
+    image->data = malloc(image->w * image->h * bitdep * channels / 8);
+    stride = image->w * bitdep * channels / 8;
+
+    for (i = 0; i < image->h; i++) {
+    	q = (image->h - i - 1) * stride;
+    	row_ptrs[i] = image->data + q;
+    }
+
+	png_read_image(png_ptr, row_ptrs);
+	free(row_ptrs);
+	png_destroy_read_struct(&png_ptr, &info_ptr,0);
+
+	return 1;
+}
+
+static int load_jpeg(FILE *fd, struct s_image *image)
 {
     struct jpeg_decompress_struct cinfo;
     struct jpeg_error_mgr err;
     unsigned int row_span;
     unsigned int rows_read;
     JSAMPARRAY buffer;
-    FILE *fd = NULL;
 
     cinfo.err = jpeg_std_error(&err);
     cinfo.err->error_exit = &jpeg_error_exit_handler;
@@ -150,23 +234,16 @@ static void image_load(struct s_image *image)
 			image->data = NULL;
 		}
 
-		return;
+		return 0;
 	}
-
-    image->data = NULL;
-
-    fd = fopen(image->path, "rb");
-
-    if (fd == NULL)
-        return;
 
     jpeg_stdio_src(&cinfo, fd);
     jpeg_read_header(&cinfo, TRUE);
     jpeg_start_decompress(&cinfo);
 
     image->n_comp = cinfo.output_components;
-    image->w = next_power_of_2(cinfo.output_width);
-    image->h = next_power_of_2(cinfo.output_height);
+    image->w = cinfo.output_width;
+    image->h = cinfo.output_height;
 
     row_span = image->n_comp * image->w;
     image->data = malloc(row_span * image->h);
@@ -183,6 +260,29 @@ static void image_load(struct s_image *image)
 
     jpeg_finish_decompress(&cinfo);
     jpeg_destroy_decompress(&cinfo);
+
+    return 1;
+}
+
+static void image_load(struct s_image *image)
+{
+    FILE *fd = NULL;
+
+    image->data = NULL;
+
+    fd = fopen(image->path, "rb");
+
+    if (fd == NULL)
+        return;
+
+    if (load_png(fd, image)) {
+    	fclose(fd);
+    	return;
+    }
+
+    rewind(fd);
+    load_jpeg(fd, image);
+
     fclose(fd);
 }
 
