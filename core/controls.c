@@ -38,6 +38,7 @@ struct ils_control *ils_def_control(char *name)
     struct ils_control *control = malloc(sizeof(*control));
     control->name = name;
     control->keys = fac_ini_lista();
+    control->input_proc = NULL;
     fac_inc_item(pool, control);
 
     printf("i: controle %s inicializado.\n", name);
@@ -162,13 +163,16 @@ struct ils_key *ils_ret_key_event(struct ils_obj *obj, struct ils_key_press *key
 void ils_send_event(struct ils_obj *obj, struct ils_evento *evento)
 {
 	struct ils_control *control = ils_ret_obj_control(obj);
+
+	if (control->input_proc == NULL)
+	    return;
+
 	control->input_proc(*evento);
 }
 
 static void term_control(struct ils_control *control)
 {
 	struct fac_iterador *it;
-	struct ils_key *key;
 
 	if (control == NULL)
 		return;
