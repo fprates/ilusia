@@ -8,12 +8,14 @@
 #include "ilusia.h"
 #include <faclib.h>
 
-void ils_ini(void)
+void ils_ini(struct ils_config *config)
 {
 	ils_ini_objects();
     ils_ini_controls();
     ils_ini_textures();
     ils_ini_timers();
+
+    config->global_proc = NULL;
 }
 
 void ils_term(struct ils_obj *obj)

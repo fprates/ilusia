@@ -74,6 +74,9 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
             _call_output_proc(cen, obj_);
             _pop_state();
 
+            if (config.global_proc != NULL)
+                config.global_proc(cen, obj_);
+
             if (key == NULL)
             	continue;
 

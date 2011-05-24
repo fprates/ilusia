@@ -72,6 +72,7 @@ struct ils_config {
     struct ils_pos view;
     struct ils_persp persp;
     struct ils_camera camera;
+    void (*global_proc)(struct ils_obj *cen, struct ils_obj *obj);
 };
 
 struct ils_view {
@@ -95,7 +96,7 @@ struct ils_key;
 
 struct ils_texture;
 
-extern void ils_ini(void);
+extern void ils_ini(struct ils_config *config);
 
 extern void ils_ini_objects(void);
 
