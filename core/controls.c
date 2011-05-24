@@ -11,7 +11,7 @@
 #include "../ilusia.h"
 #include "object.h"
 
-struct fac_lista *pool;
+static struct fac_lista *pool;
 
 struct ils_control {
     char *name;
@@ -174,12 +174,8 @@ static void term_control(struct ils_control *control)
 		return;
 
 	it = fac_ini_iterador(control->keys);
-	while (fac_existe_prox(it)) {
-	    key = fac_proximo(it);
-	    ils_term_timer(key->timer);
-
-		free(key);
-	}
+	while (fac_existe_prox(it))
+	    free(fac_proximo(it));
 
 	fac_rm_iterador(it);
 	fac_rm_lista(control->keys);

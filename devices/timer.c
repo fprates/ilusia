@@ -16,7 +16,7 @@ struct ils_timer {
     unsigned int pausa;
 };
 
-struct fac_lista *pool;
+static struct fac_lista *pool;
 
 void ils_ini_timers(void)
 {

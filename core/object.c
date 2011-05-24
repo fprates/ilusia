@@ -30,6 +30,13 @@ struct ils_complex_obj {
 	struct ils_pos pos;
 };
 
+static struct fac_lista *pool;
+
+void ils_ini_objects(void)
+{
+	pool = fac_ini_lista();
+}
+
 struct ils_obj *ils_def_obj(const char *name)
 {
 	struct ils_obj *obj = malloc(sizeof(*obj));
@@ -38,6 +45,8 @@ struct ils_obj *ils_def_obj(const char *name)
 	obj->espec = NULL;
 	obj->control = NULL;
 	obj->proc_output = NULL;
+
+	fac_inc_item(pool, obj);
 
 	printf("i: objeto %s gerado.\n", name);
 	return obj;
@@ -184,33 +193,26 @@ void _call_output_proc(struct ils_obj *cen, struct ils_obj *obj)
 	obj->proc_output(view);
 }
 
-static void term_obj(struct ils_obj *obj)
+void ils_term_objects(void)
 {
-    if (obj == NULL)
-    	return;
+	struct ils_obj *obj;
+	struct fac_iterador *iti;
+	struct fac_iterador *it = fac_ini_iterador(pool);
 
-    fac_rm_lista(obj->objs);
-    free(obj);
-}
+	while (fac_existe_prox(it)) {
+		obj = fac_proximo(it);
+		iti = fac_ini_iterador(obj->objs);
+		while (fac_existe_prox(iti))
+			free(fac_proximo(iti));
 
-void ils_term_all(struct ils_obj *obj)
-{
-   struct ils_complex_obj *obj_;
-   struct fac_iterador *it;
+		fac_rm_iterador(iti);
+		fac_rm_lista(obj->objs);
 
-   if (obj == NULL)
-       return;
+		printf("i: objeto %s removido.\n", obj->name);
 
-   it = fac_ini_iterador(obj->objs);
+		free(obj);
+	}
 
-   while (fac_existe_prox(it)) {
-       obj_ = fac_proximo(it);
-       term_obj(obj_->obj);
-       free(obj_);
-   }
-
-   fac_rm_iterador(it);
-
-   printf("i: objeto %s finalizado.\n", obj->name);
-   free(obj);
+	fac_rm_iterador(it);
+	fac_rm_lista(pool);
 }

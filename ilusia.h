@@ -97,6 +97,8 @@ struct ils_texture;
 
 extern void ils_ini(void);
 
+extern void ils_ini_objects(void);
+
 extern struct ils_obj *ils_def_obj(const char *);
 
 extern void ils_def_obj_espec(struct ils_obj *, void *);
@@ -190,7 +192,7 @@ extern void ils_start(struct ils_obj *, struct ils_obj *, struct ils_config);
 
 extern void ils_term(struct ils_obj *);
 
-extern void ils_term_all(struct ils_obj *);
+extern void ils_term_objects(void);
 
 extern void ils_ini_textures(void);
 
