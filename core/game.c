@@ -60,7 +60,15 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
         while (fac_existe_prox(it)) {
             obj_ = ils_ret_obj_from_complex(fac_proximo(it));
 
-            key = ils_ret_key_event(obj_, &key_press);
+            switch (ils_ret_event_source(obj_)) {
+            case ILS_KEY:
+                key = ils_ret_key_event(obj_, &key_press);
+                break;
+
+            case ILS_BOT:
+            	key = ils_ret_bot_event(cen, obj_);
+            	break;
+            }
 
             _push_state();
             _call_output_proc(cen, obj_);

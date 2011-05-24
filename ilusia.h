@@ -20,6 +20,10 @@ enum ils_e_texture {
 	DONT_INVERT, INVERT
 };
 
+enum ils_event_source {
+	ILS_KEY, ILS_BOT
+};
+
 struct ils_obj;
 struct ils_complex_obj;
 struct ils_control;
@@ -124,10 +128,13 @@ extern void ils_def_output_proc(struct ils_obj *, void (*)(struct ils_view));
 
 extern void ils_ini_controls(void);
 
-extern struct ils_control *ils_def_control(char *);
+extern struct ils_control *ils_def_control(char *control_name);
 
 extern struct ils_key *ils_def_key(struct ils_control *, int, int,
         enum ils_keypress);
+
+extern struct ils_key *ils_def_bot_proc(struct ils_control *control,
+		unsigned int (*bot_proc)(struct ils_obj *cen, struct ils_obj *obj));
 
 extern int ils_ret_event_code(struct ils_key *);
 
@@ -135,15 +142,21 @@ extern void ils_def_key_timer(struct ils_key *, unsigned int);
 
 extern struct ils_timer *ils_ret_key_timer(struct ils_key *);
 
-extern void ils_def_input_proc(struct ils_control *,
-		void (*)(struct ils_evento));
+extern void ils_def_input_proc(struct ils_control *control,
+		void (*input_proc)(struct ils_evento));
 
-extern void ils_def_obj_control(struct ils_obj *, struct ils_control *);
+extern void ils_def_obj_control(struct ils_obj *obj,
+		struct ils_control *control, enum ils_event_source event_source);
 
 extern struct ils_control *ils_ret_obj_control(struct ils_obj *);
 
-extern struct ils_key *ils_ret_key_event(
-        struct ils_obj *, struct ils_key_press *);
+extern enum ils_event_source ils_ret_event_source(struct ils_obj *obj);
+
+extern struct ils_key *ils_ret_bot_event(struct ils_obj *cen,
+		struct ils_obj *obj);
+
+extern struct ils_key *ils_ret_key_event(struct ils_obj *obj,
+		struct ils_key_press *key_press);
 
 extern void ils_send_event(struct ils_obj *, struct ils_evento *);
 

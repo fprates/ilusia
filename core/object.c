@@ -14,6 +14,7 @@
 struct ils_obj {
 	const char *name;
 	struct fac_lista *objs;
+	enum ils_event_source event_source;
 	struct ils_control *control;
 	void (*proc_output)(struct ils_view);
     void *espec;
@@ -81,8 +82,10 @@ const char *ils_ret_name(struct ils_obj *obj)
 	return obj->name;
 }
 
-void ils_def_obj_control(struct ils_obj *obj, struct ils_control *control)
+void ils_def_obj_control(struct ils_obj *obj, struct ils_control *control,
+		enum ils_event_source event_source)
 {
+	obj->event_source = event_source;
     obj->control = control;
 }
 
@@ -162,6 +165,11 @@ void ils_def_output_proc(struct ils_obj *obj,
 		void (*proc_output)(struct ils_view view))
 {
 	obj->proc_output = proc_output;
+}
+
+enum ils_event_source ils_ret_event_source(struct ils_obj *obj)
+{
+	return obj->event_source;
 }
 
 void _call_output_proc(struct ils_obj *cen, struct ils_obj *obj)
