@@ -34,6 +34,8 @@ struct ils_timer *ils_def_timer(char *name, unsigned int milisseg)
 
     fac_inc_item(pool, timer);
 
+    printf("i: timer %s gerado.\n", name);
+
     return timer;
 }
 

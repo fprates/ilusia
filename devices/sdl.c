@@ -77,6 +77,7 @@ static int def_sdl_fnc(struct s_sdl *sdl_)
             sdl_->lib, "SDL_CreateRGBSurface");
     sdl_->fnc.SDL_BlitSurface = fac_ret_proc_lib(sdl_->lib, "SDL_UpperBlit");
     sdl_->fnc.SDL_Quit = fac_ret_proc_lib(sdl_->lib, "SDL_Quit");
+    sdl_->fnc.SDL_GetTicks = fac_ret_proc_lib(sdl_->lib, "SDL_GetTicks");
 
     /*
      * Funções SDL TTF
