@@ -94,7 +94,6 @@ void ils_reset_timer_cnt(struct ils_timer *timer)
     struct ils_sdl *sdl = ils_ret_sdl_fncs();
 
     timer->tmp_ini = sdl->SDL_GetTicks();
-    printf("i: timer \"%s\" has been reseted.\n", timer->name);
 }
 
 /*

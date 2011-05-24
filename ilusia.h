@@ -13,7 +13,10 @@
 enum ils_signal {ILS_TERM};
 
 enum ils_keypress {
-    ILS_SINGLE, ILS_CONTINUOUS
+    ILS_CONTINUOUS,
+    ILS_RELEASED,
+    ILS_PRESSED,
+    ILS_PRESSED_RELEASED
 };
 
 enum ils_e_texture {
@@ -89,7 +92,7 @@ struct ils_evento {
 
 struct ils_key_press {
     SDLKey code;
-    int pressed;
+    char pressed;
 };
 
 struct ils_key;

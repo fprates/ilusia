@@ -124,40 +124,66 @@ struct ils_key *ils_ret_bot_event(struct ils_obj *cen, struct ils_obj *obj)
 
 struct ils_key *ils_ret_key_event(struct ils_obj *obj, struct ils_key_press *key_press)
 {
-	struct fac_iterador *it;
+    struct fac_iterador *it;
     struct ils_key *key = NULL;
-	struct ils_control *control = ils_ret_obj_control(obj);
+    struct ils_control *control = ils_ret_obj_control(obj);
 
-	if (control == NULL)
-	    return NULL;
+    if (control == NULL)
+        return NULL;
 
-	it = fac_ini_iterador(control->keys);
+    it = fac_ini_iterador(control->keys);
 
-	while (fac_existe_prox(it)) {
-		key = fac_proximo(it);
+    while (fac_existe_prox(it)) {
+        key = fac_proximo(it);
 
-		if ((key->code != key_press->code) && (key->active == 0)) {
-		    key = NULL;
-			continue;
-		}
+        if ((key->code != key_press->code) && (key->active == 0)) {
+            key = NULL;
+            continue;
+        }
 
-		switch (key->mode) {
-		case ILS_CONTINUOUS:
-		    if ((key->code == key_press->code) && (key_press->pressed != -1))
-		        key->active = key_press->pressed;
+        switch (key->mode) {
+        case ILS_CONTINUOUS:
+            if ((key->code == key_press->code) && (key_press->pressed != -1))
+                key->active = key_press->pressed;
 
-		    break;
+            break;
 
-		default:
-		    break;
-		}
+        case ILS_RELEASED:
+            if ((key->code == key_press->code) && (key_press->pressed == 0))
+                break;
 
-		break;
-	}
+            key = NULL;
 
-	fac_rm_iterador(it);
+            break;
 
-	return key;
+        case ILS_PRESSED:
+            if ((key->code == key_press->code) && (key_press->pressed == 1))
+                break;
+
+            key = NULL;
+
+            break;
+
+        case ILS_PRESSED_RELEASED:
+            if (key->code == key_press->code)
+                break;
+
+            key = NULL;
+
+            break;
+
+        default:
+            key = NULL;
+
+            break;
+        }
+
+        break;
+    }
+
+    fac_rm_iterador(it);
+
+    return key;
 }
 
 void ils_send_event(struct ils_obj *obj, struct ils_evento *evento)
