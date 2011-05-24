@@ -176,7 +176,7 @@ void _call_output_proc(struct ils_obj *cen, struct ils_obj *obj)
 	obj->proc_output(view);
 }
 
-void ils_term(struct ils_obj *obj)
+static void term_obj(struct ils_obj *obj)
 {
     if (obj == NULL)
     	return;
@@ -187,22 +187,22 @@ void ils_term(struct ils_obj *obj)
 
 void ils_term_all(struct ils_obj *obj)
 {
-	struct ils_complex_obj *obj_;
-	struct fac_iterador *it;
+   struct ils_complex_obj *obj_;
+   struct fac_iterador *it;
 
-	if (obj == NULL)
-		return;
+   if (obj == NULL)
+       return;
 
-	it = fac_ini_iterador(obj->objs);
+   it = fac_ini_iterador(obj->objs);
 
-	while (fac_existe_prox(it)) {
-		obj_ = fac_proximo(it);
-		ils_term_all(obj_->obj);
-		free(obj_);
-	}
+   while (fac_existe_prox(it)) {
+       obj_ = fac_proximo(it);
+       term_obj(obj_->obj);
+       free(obj_);
+   }
 
-	fac_rm_iterador(it);
+   fac_rm_iterador(it);
 
-	printf("i: objeto %s finalizado.\n", obj->name);
-	free(obj);
+   printf("i: objeto %s finalizado.\n", obj->name);
+   free(obj);
 }

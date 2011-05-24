@@ -24,7 +24,7 @@ struct ils_key {
     int evcode;
     enum ils_keypress mode;
     int active;
-    struct ils_obj *timer;
+    struct ils_timer *timer;
 };
 
 void ils_ini_controls()
@@ -68,7 +68,7 @@ void ils_def_key_timer(struct ils_key *key, unsigned int time)
     key->timer = ils_def_timer("key_timer", time);
 }
 
-struct ils_obj *ils_ret_key_timer(struct ils_key *key)
+struct ils_timer *ils_ret_key_timer(struct ils_key *key)
 {
     return key->timer;
 }

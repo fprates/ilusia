@@ -23,6 +23,7 @@ enum ils_e_texture {
 struct ils_obj;
 struct ils_complex_obj;
 struct ils_control;
+struct ils_timer;
 
 struct ils_video {
     unsigned int w;
@@ -132,7 +133,7 @@ extern int ils_ret_event_code(struct ils_key *);
 
 extern void ils_def_key_timer(struct ils_key *, unsigned int);
 
-extern struct ils_obj *ils_ret_key_timer(struct ils_key *);
+extern struct ils_timer *ils_ret_key_timer(struct ils_key *);
 
 extern void ils_def_input_proc(struct ils_control *,
 		void (*)(struct ils_evento));
@@ -146,19 +147,23 @@ extern struct ils_key *ils_ret_key_event(
 
 extern void ils_send_event(struct ils_obj *, struct ils_evento *);
 
-extern struct ils_obj *ils_def_timer(char *, unsigned int);
+extern void ils_ini_timers(void);
 
-extern unsigned char ils_ret_timer_mrk(struct ils_obj *);
+extern struct ils_timer *ils_def_timer(char *name, unsigned int tempo);
 
-extern unsigned char ils_is_timer_stopped(struct ils_obj *);
+extern unsigned char ils_ret_timer_mrk(struct ils_timer *timer);
 
-extern void ils_start_timer(struct ils_obj *);
+extern unsigned char ils_is_timer_stopped(struct ils_timer *timer);
 
-extern void ils_stop_timer(struct ils_obj *);
+extern void ils_start_timer(struct ils_timer *timer);
 
-extern void ils_reset_timer_cnt(struct ils_obj *);
+extern void ils_stop_timer(struct ils_timer *timer);
 
-extern void ils_term_timer(struct ils_obj *);
+extern void ils_reset_timer_cnt(struct ils_timer *timer);
+
+extern void ils_term_timer(struct ils_timer *timer);
+
+extern void ils_term_timers(void);
 
 extern void ils_term_controls(void);
 

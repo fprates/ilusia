@@ -31,7 +31,7 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
     struct ils_key_press key_press;
     struct ils_key *key;
 	struct ils_obj *obj_;
-	struct ils_obj *timer;
+	struct ils_timer *timer;
 	struct ils_evento evento;
 	struct fac_iterador *it = ils_ret_complex_objs(cen);
 
@@ -81,7 +81,6 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
                     ils_start_timer(timer);
                     continue;
                 }
-
 
                 if (!ils_ret_timer_mrk(timer))
                     continue;

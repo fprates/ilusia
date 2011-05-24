@@ -6,41 +6,50 @@
  */
 
 #include "../ilusia.h"
+#include <faclib.h>
 
 // propriedades do timer
-struct s_timer {
+struct ils_timer {
+    char *name;
     unsigned int tmp_max;
     unsigned int tmp_ini;
     unsigned int pausa;
 };
 
-struct ils_obj *ils_def_timer(char *name, unsigned int milisseg)
+struct fac_lista *pool;
+
+void ils_ini_timers(void)
 {
-    struct ils_obj *obj = ils_def_obj(name);
-    struct s_timer *timer_ = malloc(sizeof(*timer_));
+    pool = fac_ini_lista();
+}
 
-    ils_def_obj_espec(obj, timer_);
-    timer_->pausa = 1;
-    timer_->tmp_ini = 0;
-    timer_->tmp_max = milisseg;
+struct ils_timer *ils_def_timer(char *name, unsigned int milisseg)
+{
+    struct ils_timer *timer = malloc(sizeof(*timer));
 
-    return obj;
+    timer->name = name;
+    timer->pausa = 1;
+    timer->tmp_ini = 0;
+    timer->tmp_max = milisseg;
+
+    fac_inc_item(pool, timer);
+
+    return timer;
 }
 
 /**
  * verifica se o temporizador atingiu o limite
  */
-unsigned char ils_ret_timer_mrk(struct ils_obj *timer)
+unsigned char ils_ret_timer_mrk(struct ils_timer *timer)
 {
     unsigned int tmp_atual;
-    struct s_timer *timer_ =  ils_ret_obj_espec(timer);
     struct ils_sdl *sdl = ils_ret_sdl_fncs();
 
-    if (timer_->pausa)
+    if (timer->pausa)
         return 0;
 
-    tmp_atual = sdl->SDL_GetTicks() - timer_->tmp_ini;
-    if (tmp_atual >= timer_->tmp_max)
+    tmp_atual = sdl->SDL_GetTicks() - timer->tmp_ini;
+    if (tmp_atual >= timer->tmp_max)
         return 1;
 
     return 0;
@@ -49,58 +58,62 @@ unsigned char ils_ret_timer_mrk(struct ils_obj *timer)
 /**
  * verifica se o temporizador esta pausado
  */
-unsigned char ils_is_timer_stopped(struct ils_obj *timer)
+unsigned char ils_is_timer_stopped(struct ils_timer *timer)
 {
-    struct s_timer *timer_ = ils_ret_obj_espec(timer);
-    return timer_->pausa;
+    return timer->pausa;
 }
 
 /**
  * prossegue com o temporizador
  */
-void ils_start_timer(struct ils_obj *timer)
+void ils_start_timer(struct ils_timer *timer)
 {
-    struct s_timer *timer_ = ils_ret_obj_espec(timer);
     struct ils_sdl *sdl = ils_ret_sdl_fncs();
 
-    timer_->pausa = 0;
-    timer_->tmp_ini = sdl->SDL_GetTicks();
-    printf("i: timer \"%s\" has been started.\n", ils_ret_obj_name(timer));
+    timer->pausa = 0;
+    timer->tmp_ini = sdl->SDL_GetTicks();
+    printf("i: timer \"%s\" has been started.\n", timer->name);
 }
 
 /**
  * interrompe o temporizador
  */
-void ils_stop_timer(struct ils_obj *timer)
+void ils_stop_timer(struct ils_timer *timer)
 {
-    struct s_timer *timer_ = ils_ret_obj_espec(timer);
-
-    timer_->pausa = 1;
-    printf("i: timer \"%s\" has been stopped.\n", ils_ret_obj_name(timer));
+    timer->pausa = 1;
+    printf("i: timer \"%s\" has been stopped.\n", timer->name);
 }
 
 /**
  * reinicia contagem
  */
-void ils_reset_timer_cnt(struct ils_obj *timer)
+void ils_reset_timer_cnt(struct ils_timer *timer)
 {
-    struct s_timer *timer_ = ils_ret_obj_espec(timer);
     struct ils_sdl *sdl = ils_ret_sdl_fncs();
 
-    timer_->tmp_ini = sdl->SDL_GetTicks();
-    printf("i: timer \"%s\" has been reseted.\n", ils_ret_obj_name(timer));
+    timer->tmp_ini = sdl->SDL_GetTicks();
+    printf("i: timer \"%s\" has been reseted.\n", timer->name);
 }
 
 /*
  * destrói temporizador
  */
-void ils_term_timer(struct ils_obj *timer)
+void ils_term_timer(struct ils_timer *timer)
 {
-    struct s_timer *timer_ = ils_ret_obj_espec(timer);
-
-    if (timer_ == NULL)
+    if (timer == NULL)
         return;
 
-    free(timer_);
-    ils_term(timer);
+    free(timer);
+}
+
+void ils_term_timers(void)
+{
+    struct fac_iterador *it = fac_ini_iterador(pool);
+
+    while (fac_existe_prox(it))
+        ils_term_timer(fac_proximo(it));
+
+    fac_rm_iterador(it);
+    fac_rm_lista(pool);
+
 }
