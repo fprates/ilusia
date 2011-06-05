@@ -139,7 +139,7 @@ extern struct ils_control *ils_def_control(char *control_name);
 extern struct ils_key *ils_def_key(struct ils_control *, int, int,
         enum ils_keypress);
 
-extern struct ils_key *ils_def_bot_proc(struct ils_control *control,
+extern void ils_def_bot_proc(struct ils_control *control,
 		unsigned int (*bot_proc)(struct ils_obj *cen, struct ils_obj *obj));
 
 extern int ils_ret_event_code(struct ils_key *);

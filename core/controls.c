@@ -13,19 +13,20 @@
 
 static struct fac_lista *pool;
 
-struct ils_control {
-    char *name;
-    struct fac_lista *keys;
-    void (*input_proc)(struct ils_evento);
-};
-
 struct ils_key {
     int code;
     int evcode;
     enum ils_keypress mode;
     int active;
     struct ils_timer *timer;
+};
+
+struct ils_control {
+    char *name;
+    struct fac_lista *keys;
+    void (*input_proc)(struct ils_evento);
     unsigned int (*bot_proc)(struct ils_obj *, struct ils_obj *);
+    struct ils_key key_bot;
 };
 
 void ils_ini_controls()
@@ -61,20 +62,10 @@ struct ils_key *ils_def_key(struct ils_control *control, int evcode, int key,
     return key_;
 }
 
-struct ils_key *ils_def_bot_proc(struct ils_control *control,
+void ils_def_bot_proc(struct ils_control *control,
 		unsigned int (*bot_proc)(struct ils_obj *cen, struct ils_obj *obj))
 {
-	struct ils_key *key;
-
-	if (fac_qt_itens(control->keys) > 0)
-		return NULL;
-
-	key = malloc(sizeof(*key));
-	key->bot_proc = bot_proc;
-
-	fac_inc_item(control->keys, key);
-
-	return key;
+    control->bot_proc = bot_proc;
 }
 
 int ils_ret_event_code(struct ils_key *key)
@@ -100,26 +91,14 @@ void ils_def_input_proc(struct ils_control *control,
 
 struct ils_key *ils_ret_bot_event(struct ils_obj *cen, struct ils_obj *obj)
 {
-	struct fac_iterador *it;
-    struct ils_key *key = NULL;
 	struct ils_control *control = ils_ret_obj_control(obj);
 
 	if (control == NULL)
 	    return NULL;
 
-	it = fac_ini_iterador(control->keys);
+    control->key_bot.evcode = control->bot_proc(cen, obj);
 
-	while (fac_existe_prox(it)) {
-		key = fac_proximo(it);
-
-		key->evcode = key->bot_proc(cen, obj);
-
-		break;
-	}
-
-	fac_rm_iterador(it);
-
-	return key;
+    return &control->key_bot;
 }
 
 struct ils_key *ils_ret_key_event(struct ils_obj *obj, struct ils_key_press *key_press)
