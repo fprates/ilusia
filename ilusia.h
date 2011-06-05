@@ -199,11 +199,12 @@ extern struct ils_sdl *ils_ret_sdl_fncs(void);
 
 extern struct ils_gl *ils_ret_gl_fncs(void);
 
-extern void ils_def_signal(int);
+extern void ils_def_signal(int signal);
 
-extern void ils_start(struct ils_obj *, struct ils_obj *, struct ils_config);
+extern void ils_start(
+		struct ils_obj *game, struct ils_obj *cen, struct ils_config config);
 
-extern void ils_term(struct ils_obj *);
+extern void ils_term(struct ils_obj *game);
 
 extern void ils_term_objects(void);
 

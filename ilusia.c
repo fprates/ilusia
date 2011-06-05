@@ -15,6 +15,31 @@ void ils_ini(struct ils_config *config)
     ils_ini_textures();
     ils_ini_timers();
 
+    config->video.w = 800;
+    config->video.h = 600;
+    config->video.bpp = 24;
+    config->title = "";
+
+    config->view.x = 0;
+    config->view.y = 0;
+    config->view.dw = 1200;
+    config->view.dh = 780;
+
+    config->persp.fovy = 60;
+    config->persp.aspec = 1;
+    config->persp.zprox = 1;
+    config->persp.zdist = 50;
+
+    config->camera.objx = 0;
+    config->camera.objy = 0;
+    config->camera.objz = 0;
+    config->camera.obsx = 0;
+    config->camera.obsy = 0;
+    config->camera.obsz = 10;
+    config->camera.vupx = 0;
+    config->camera.vupy = 1;
+    config->camera.vupz = 0;
+
     config->global_proc = NULL;
 }
 
