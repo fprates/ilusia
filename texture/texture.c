@@ -13,6 +13,12 @@
 #include <jpeglib.h>
 #include "../ilusia.h"
 
+#ifdef linux
+#define ILS_JPEG_32 "/usr/lib/libjpeg.so"
+#define ILS_JPEG_64 "/usr/lib64/libjpeg.so"
+#define ILS_PNG "libpng.so"
+#endif
+
 struct ils_texture {
     char *name;
     char *path;
@@ -43,16 +49,133 @@ struct s_jpeg_err_manager {
 	jmp_buf jmpbuf;
 };
 
+struct s_jpeg {
+    void(*jpeg_destroy)JPP((j_common_ptr));
+    struct jpeg_error_mgr *(*jpeg_std_error)JPP((struct jpeg_error_mgr *));
+    void(*jpeg_CreateDecompress)JPP((j_decompress_ptr, int, size_t));
+    void(*jpeg_stdio_src) JPP((j_decompress_ptr, FILE *));
+    int(*jpeg_read_header)JPP((j_decompress_ptr, boolean));
+    boolean(*jpeg_start_decompress)JPP((j_decompress_ptr));
+    JDIMENSION(*jpeg_read_scanlines)JPP(
+            (j_decompress_ptr, JSAMPARRAY, JDIMENSION));
+    boolean(*jpeg_finish_decompress)JPP((j_decompress_ptr));
+    void(*jpeg_destroy_decompress)JPP((j_decompress_ptr));
+};
+
+struct s_png {
+    int (*png_sig_cmp)(png_bytep, png_size_t, png_size_t);
+    png_structp (*png_create_read_struct)(
+            png_const_charp, png_voidp, png_error_ptr, png_error_ptr);
+    png_infop (*png_create_info_struct)(png_structp);
+    void (*png_destroy_read_struct)(png_structpp, png_infopp, png_infopp);
+    void (*png_init_io)(png_structp, png_FILE_p);
+    void (*png_set_sig_bytes)(png_structp, int);
+    void (*png_read_info)(png_structp, png_infop);
+    png_uint_32 (*png_get_image_height)(png_structp, png_infop);
+    png_uint_32 (*png_get_image_width)(png_structp, png_infop);
+    png_uint_32 (*png_get_bit_depth)(png_structp, png_infop);
+    png_uint_32 (*png_get_channels)(png_structp, png_infop);
+    png_uint_32 (*png_get_color_type)(png_structp, png_infop);
+    void (*png_set_palette_to_rgb)(png_structp);
+    void (*png_set_tRNS_to_alpha)(png_structp);
+    png_uint_32 (*png_get_valid)(png_structp, png_infop, png_uint_32);
+    void (*png_set_strip_16)(png_structp);
+    void (*png_read_image)(png_structp, png_bytepp);
+};
+
 static struct s_global {
+	void *jpeg_lib;
+	struct s_jpeg jpeg;
+	void *png_lib;
+	struct s_png png;
 	struct fac_lista *textures;
 	struct s_jpeg_err_manager jpeg_err;
 } global;
 
 void ils_ini_textures(void)
 {
+    struct s_jpeg *jpeg = &global.jpeg;
+    struct s_png *png = &global.png;
+
     global.textures = fac_ini_lista();
+
+    /*
+     * dlopen intercepta incialmente libjpeg da jre.
+     * especificamos, então, caminhos absolutos.
+     */
+    global.jpeg_lib = fac_ld_lib(ILS_JPEG_64);
+    if (global.jpeg_lib == NULL)
+    	global.jpeg_lib = fac_ld_lib(ILS_JPEG_32);
+
+    if (global.jpeg_lib != NULL) {
+        jpeg->jpeg_destroy = fac_ret_proc_lib(global.jpeg_lib, "jpeg_destroy");
+        jpeg->jpeg_std_error = fac_ret_proc_lib(
+                global.jpeg_lib, "jpeg_std_error");
+        jpeg->jpeg_CreateDecompress = fac_ret_proc_lib(
+                global.jpeg_lib, "jpeg_CreateDecompress");
+        jpeg->jpeg_stdio_src = fac_ret_proc_lib(
+                global.jpeg_lib, "jpeg_stdio_src");
+        jpeg->jpeg_read_header = fac_ret_proc_lib(
+                global.jpeg_lib, "jpeg_read_header");
+        jpeg->jpeg_start_decompress = fac_ret_proc_lib(
+                global.jpeg_lib, "jpeg_start_decompress");
+        jpeg->jpeg_read_scanlines = fac_ret_proc_lib(
+                global.jpeg_lib, "jpeg_read_scanlines");
+        jpeg->jpeg_finish_decompress = fac_ret_proc_lib(
+                global.jpeg_lib, "jpeg_finish_decompress");
+        jpeg->jpeg_destroy_decompress = fac_ret_proc_lib(
+                global.jpeg_lib, "jpeg_destroy_decompress");
+    }
+
+    global.png_lib = fac_ld_lib(ILS_PNG);
+
+    if (global.png_lib != NULL) {
+        png->png_sig_cmp = fac_ret_proc_lib(global.png_lib, "png_sig_cmp");
+        png->png_create_read_struct = fac_ret_proc_lib(
+                global.png_lib, "png_create_read_struct");
+        png->png_create_info_struct = fac_ret_proc_lib(
+                global.png_lib, "png_create_info_struct");
+        png->png_destroy_read_struct = fac_ret_proc_lib(
+                global.png_lib, "png_destroy_read_struct");
+        png->png_init_io = fac_ret_proc_lib(global.png_lib, "png_init_io");
+        png->png_set_sig_bytes = fac_ret_proc_lib(
+                global.png_lib, "png_set_sig_bytes");
+        png->png_read_info = fac_ret_proc_lib(
+                global.png_lib, "png_read_info");
+        png->png_get_image_height = fac_ret_proc_lib(
+                global.png_lib, "png_get_image_height");
+        png->png_get_image_width = fac_ret_proc_lib(
+                global.png_lib, "png_get_image_width");
+        png->png_get_bit_depth = fac_ret_proc_lib(
+                global.png_lib, "png_get_bit_depth");
+        png->png_get_channels = fac_ret_proc_lib(
+                global.png_lib, "png_get_channels");
+        png->png_get_color_type = fac_ret_proc_lib(
+                global.png_lib, "png_get_color_type");
+        png->png_set_palette_to_rgb = fac_ret_proc_lib(
+                global.png_lib, "png_set_palette_to_rgb");
+        png->png_set_tRNS_to_alpha = fac_ret_proc_lib(
+                global.png_lib, "png_set_tRNS_to_alpha");
+        png->png_get_valid = fac_ret_proc_lib(
+                global.png_lib, "png_get_valid");
+        png->png_set_strip_16 = fac_ret_proc_lib(
+                global.png_lib, "png_set_strip_16");
+        png->png_read_image = fac_ret_proc_lib(
+                global.png_lib, "png_read_image");
+    }
 }
 
+void ils_term_textures(void)
+{
+	if (global.jpeg_lib != NULL)
+		 fac_lib_term(global.jpeg_lib);
+
+	if (global.png_lib != NULL)
+		fac_lib_term(global.png_lib);
+
+	fac_rm_lista(global.textures);
+	global.textures = NULL;
+}
 struct ils_texture *ils_texture_inc(char *id, char *path)
 {
     struct ils_texture *texture = malloc(sizeof(*texture));
@@ -120,7 +243,7 @@ static char def_texture(char *name, struct s_image *image)
 
 static void jpeg_error_exit_handler(j_common_ptr cinfo)
 {
-	jpeg_destroy(cinfo);
+	global.jpeg.jpeg_destroy(cinfo);
 	longjmp(global.jpeg_err.jmpbuf, 1);
 }
 
@@ -138,43 +261,44 @@ static int load_png(FILE *fd, struct s_image *image)
 	unsigned int i;
 	unsigned int q;
 	unsigned int stride;
+	struct s_png *png = &global.png;
 
 	if (fread(&pngid, 1, PNG_ID_SIZE, fd) == 0)
 		return 0;
 
-	if (png_sig_cmp(&pngid, 0, PNG_ID_SIZE))
+	if (png->png_sig_cmp(&pngid, 0, PNG_ID_SIZE))
 		return 0;
 
-	png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	png_ptr = png->png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 
 	if (!png_ptr)
 		return 0;
 
-	info_ptr = png_create_info_struct(png_ptr);
+	info_ptr = png->png_create_info_struct(png_ptr);
 	if (!info_ptr) {
-		png_destroy_read_struct(&png_ptr, NULL, NULL);
+	    png->png_destroy_read_struct(&png_ptr, NULL, NULL);
 		return 0;
 	}
 
-	end_info = png_create_info_struct(png_ptr);
+	end_info = png->png_create_info_struct(png_ptr);
 	if (!end_info) {
-		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
+	    png->png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		return 0;
 	}
 
-	png_init_io(png_ptr, fd);
-	png_set_sig_bytes(png_ptr, PNG_ID_SIZE);
-	png_read_info(png_ptr, info_ptr);
+	png->png_init_io(png_ptr, fd);
+	png->png_set_sig_bytes(png_ptr, PNG_ID_SIZE);
+	png->png_read_info(png_ptr, info_ptr);
 
-	image->h = png_get_image_height(png_ptr, info_ptr);
-	image->w = png_get_image_width(png_ptr, info_ptr);
-    bitdep = png_get_bit_depth(png_ptr, info_ptr);
-    channels = png_get_channels(png_ptr, info_ptr);
-    color_type = png_get_color_type(png_ptr, info_ptr);
+	image->h = png->png_get_image_height(png_ptr, info_ptr);
+	image->w = png->png_get_image_width(png_ptr, info_ptr);
+    bitdep = png->png_get_bit_depth(png_ptr, info_ptr);
+    channels = png->png_get_channels(png_ptr, info_ptr);
+    color_type = png->png_get_color_type(png_ptr, info_ptr);
 
 	switch (color_type) {
     case PNG_COLOR_TYPE_PALETTE:
-        png_set_palette_to_rgb(png_ptr);
+        png->png_set_palette_to_rgb(png_ptr);
 
         channels = 3;
         image->n_comp = 0;
@@ -182,22 +306,19 @@ static int load_png(FILE *fd, struct s_image *image)
         break;
 
     case PNG_COLOR_TYPE_GRAY:
-        if (bitdep < 8)
-        	png_set_gray_1_2_4_to_8(png_ptr);
-
         bitdep = 8;
         image->n_comp = 1;
 
         break;
 	}
 
-	if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
-		png_set_tRNS_to_alpha(png_ptr);
+	if (png->png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
+	    png->png_set_tRNS_to_alpha(png_ptr);
 		channels++;
 	}
 
 	if (bitdep == 16)
-        png_set_strip_16(png_ptr);
+	    png->png_set_strip_16(png_ptr);
 
     row_ptrs = malloc(sizeof(png_bytep) * image->h);
     image->data = malloc(image->w * image->h * bitdep * channels / 8);
@@ -208,9 +329,9 @@ static int load_png(FILE *fd, struct s_image *image)
     	row_ptrs[i] = image->data + q;
     }
 
-	png_read_image(png_ptr, row_ptrs);
+    png->png_read_image(png_ptr, row_ptrs);
 	free(row_ptrs);
-	png_destroy_read_struct(&png_ptr, &info_ptr,0);
+	png->png_destroy_read_struct(&png_ptr, &info_ptr,0);
 
 	return 1;
 }
@@ -222,11 +343,12 @@ static int load_jpeg(FILE *fd, struct s_image *image)
     unsigned int row_span;
     unsigned int rows_read;
     JSAMPARRAY buffer;
+    struct s_jpeg *jpeg = &global.jpeg;
 
-    cinfo.err = jpeg_std_error(&err);
+    cinfo.err = jpeg->jpeg_std_error(&err);
     cinfo.err->error_exit = &jpeg_error_exit_handler;
 
-    jpeg_create_decompress(&cinfo);
+    jpeg->jpeg_create_decompress(&cinfo);
 
 	if (setjmp(global.jpeg_err.jmpbuf)) {
 		if (image->data != NULL) {
@@ -237,9 +359,9 @@ static int load_jpeg(FILE *fd, struct s_image *image)
 		return 0;
 	}
 
-    jpeg_stdio_src(&cinfo, fd);
-    jpeg_read_header(&cinfo, TRUE);
-    jpeg_start_decompress(&cinfo);
+	jpeg->jpeg_stdio_src(&cinfo, fd);
+	jpeg->jpeg_read_header(&cinfo, TRUE);
+	jpeg->jpeg_start_decompress(&cinfo);
 
     image->n_comp = cinfo.output_components;
     image->w = cinfo.output_width;
@@ -253,13 +375,13 @@ static int load_jpeg(FILE *fd, struct s_image *image)
 
     rows_read = 0;
     while (cinfo.output_scanline < cinfo.output_height) {
-        jpeg_read_scanlines(&cinfo, buffer, 1);
+        jpeg->jpeg_read_scanlines(&cinfo, buffer, 1);
         memcpy(image->data + rows_read, buffer[0], row_span);
         rows_read += row_span;
     }
 
-    jpeg_finish_decompress(&cinfo);
-    jpeg_destroy_decompress(&cinfo);
+    jpeg->jpeg_finish_decompress(&cinfo);
+    jpeg->jpeg_destroy_decompress(&cinfo);
 
     return 1;
 }

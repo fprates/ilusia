@@ -200,6 +200,8 @@ extern void ils_term_objects(void);
 
 extern void ils_ini_textures(void);
 
+extern void ils_term_textures(void);
+
 extern struct ils_texture *ils_texture_inc(char *name, char *path);
 
 extern void ils_def_img(void);

@@ -22,5 +22,6 @@ void ils_term(struct ils_obj *obj)
 {
     ils_term_objects();
     ils_term_controls();
+    ils_term_textures();
     ils_term_timers();
 }
