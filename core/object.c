@@ -18,6 +18,7 @@ struct ils_obj {
 	struct ils_control *control;
 	void (*proc_output)(struct ils_view);
     void *espec;
+    unsigned long status;
     struct ils_pos pos;
 };
 
@@ -179,6 +180,33 @@ void ils_def_output_proc(struct ils_obj *obj,
 enum ils_event_source ils_ret_event_source(struct ils_obj *obj)
 {
 	return obj->event_source;
+}
+
+
+void ils_def_obj_status(struct ils_obj *obj, unsigned long status)
+{
+    obj->status = status;
+}
+
+unsigned char ils_test_obj_status(struct ils_obj *obj, unsigned int status)
+{
+    unsigned int set = 1 << status;
+
+    return (obj->status & set)? 1 : 0;
+}
+
+void ils_set_obj_status(struct ils_obj *obj, unsigned int status)
+{
+    unsigned int set = 1 << status;
+
+    obj->status |= set;
+}
+
+void ils_reset_obj_status(struct ils_obj *obj, unsigned int status)
+{
+    unsigned int set = 1 << status;
+
+    obj->status &= ~set;
 }
 
 void _call_output_proc(struct ils_obj *cen, struct ils_obj *obj)

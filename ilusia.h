@@ -158,6 +158,15 @@ extern struct ils_control *ils_ret_obj_control(struct ils_obj *);
 
 extern enum ils_event_source ils_ret_event_source(struct ils_obj *obj);
 
+extern void ils_def_obj_status(struct ils_obj *obj, unsigned long);
+
+extern unsigned char ils_test_obj_status(
+        struct ils_obj *obj, unsigned int status);
+
+extern void ils_set_obj_status(struct ils_obj *obj, unsigned int status);
+
+extern void ils_reset_obj_status(struct ils_obj *obj, unsigned int status);
+
 extern struct ils_key *ils_ret_bot_event(struct ils_obj *cen,
 		struct ils_obj *obj);
 
