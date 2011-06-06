@@ -105,6 +105,8 @@ extern void ils_ini_objects(void);
 
 extern struct ils_obj *ils_def_obj(const char *);
 
+extern struct ils_obj *ils_ret_obj_by_name(char *name);
+
 extern void ils_def_obj_espec(struct ils_obj *, void *);
 
 extern void *ils_ret_obj_espec(struct ils_obj *);
@@ -198,6 +200,8 @@ extern void ils_term_controls(void);
 extern struct ils_sdl *ils_ret_sdl_fncs(void);
 
 extern struct ils_gl *ils_ret_gl_fncs(void);
+
+extern struct ils_obj *ils_load(char *filename, struct ils_config *config);
 
 extern void ils_def_signal(int signal);
 

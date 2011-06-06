@@ -53,6 +53,25 @@ struct ils_obj *ils_def_obj(const char *name)
 	return obj;
 }
 
+struct ils_obj *ils_ret_obj_by_name(char *name)
+{
+    struct ils_obj *obj = NULL;
+    struct fac_iterador *it = fac_ini_iterador(pool);
+
+    while (fac_existe_prox(it)) {
+        obj = fac_proximo(it);
+
+        if (strcmp(obj->name, name) == 0)
+            break;
+
+        obj = NULL;
+    }
+
+    fac_rm_iterador(it);
+
+    return obj;
+}
+
 void ils_def_obj_espec(struct ils_obj *obj, void *espec)
 {
     obj->espec = espec;
