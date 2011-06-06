@@ -33,7 +33,19 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
 	struct ils_obj *obj_;
 	struct ils_timer *timer;
 	struct ils_evento evento;
-	struct fac_iterador *it = ils_ret_complex_objs(cen);
+	struct fac_iterador *it;
+
+	if (game == NULL) {
+	    printf("e: objeto de jogo não inicializado.\n");
+	    return;
+	}
+
+	if (cen == NULL) {
+	    printf("e: cenário não inicializado.\n");
+	    return;
+	}
+
+	it = ils_ret_complex_objs(cen);
 
 	system_.config = &config;
 
