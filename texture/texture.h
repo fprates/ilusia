@@ -22,4 +22,9 @@ extern int _load_texture(
 extern void _set_texture(
         struct ils_texture *texture, unsigned int w, unsigned int h);
 
+/*
+ * Carrega imagens cadastradas
+ */
+extern void _def_img(void);
+
 #endif /* TEXTURE_H_ */

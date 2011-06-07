@@ -96,12 +96,12 @@ void ils_inc_obj(struct ils_obj *orig, struct ils_obj *dest)
 	printf("i: incluindo %s em %s.\n", orig->name, dest->name);
 }
 
-struct fac_iterador *ils_ret_complex_objs(struct ils_obj *obj)
+struct fac_iterador *_ret_complex_objs(struct ils_obj *obj)
 {
 	return fac_ini_iterador(obj->objs);
 }
 
-struct ils_obj *ils_ret_obj_from_complex(struct ils_complex_obj *complex)
+struct ils_obj *_ret_obj_from_complex(struct ils_complex_obj *complex)
 {
 	return complex->obj;
 }

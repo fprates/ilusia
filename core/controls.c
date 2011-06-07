@@ -90,7 +90,7 @@ void ils_def_input_proc(struct ils_control *control,
     control->input_proc = input_proc;
 }
 
-struct ils_key *ils_ret_bot_event(struct ils_obj *cen, struct ils_obj *obj)
+struct ils_key *_ret_bot_event(struct ils_obj *cen, struct ils_obj *obj)
 {
 	struct ils_control *control = ils_ret_obj_control(obj);
 
@@ -102,7 +102,7 @@ struct ils_key *ils_ret_bot_event(struct ils_obj *cen, struct ils_obj *obj)
     return &control->key_bot;
 }
 
-struct ils_key *ils_ret_key_event(struct ils_obj *obj, struct ils_key_press *key_press)
+struct ils_key *_ret_key_event(struct ils_obj *obj, struct ils_key_press *key_press)
 {
     struct fac_iterador *it;
     struct ils_key *key = NULL;

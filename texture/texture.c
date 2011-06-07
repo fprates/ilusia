@@ -431,7 +431,7 @@ static void image_load(struct s_image *image)
     fclose(fd);
 }
 
-void ils_def_img(void)
+void _def_img(void)
 {
     struct ils_texture *texture;
     struct fac_iterador *it = fac_ini_iterador(global.textures);

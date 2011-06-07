@@ -9,8 +9,10 @@
 #include <faclib.h>
 #include "object.h"
 #include "../ilusia.h"
+#include "../core/controls.h"
 #include "../devices/sdl.h"
 #include "../texture/text.h"
+#include "../texture/texture.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -225,7 +227,7 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
 	    return;
 	}
 
-	it = ils_ret_complex_objs(cen);
+	it = _ret_complex_objs(cen);
 
 	system_.config = &config;
 
@@ -234,7 +236,7 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
         return;
     }
 
-    ils_def_img();
+    _def_img();
     _def_fonts();
 
     printf("i: aguardando eventos...\n");
@@ -251,15 +253,15 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
 
         fac_rst_iterador(it);
         while (fac_existe_prox(it)) {
-            obj_ = ils_ret_obj_from_complex(fac_proximo(it));
+            obj_ = _ret_obj_from_complex(fac_proximo(it));
 
             switch (ils_ret_event_source(obj_)) {
             case ILS_KEY:
-                key = ils_ret_key_event(obj_, &key_press);
+                key = _ret_key_event(obj_, &key_press);
                 break;
 
             case ILS_BOT:
-            	key = ils_ret_bot_event(cen, obj_);
+            	key = _ret_bot_event(cen, obj_);
             	break;
             }
 

@@ -125,11 +125,6 @@ extern char *ils_ret_obj_name(struct ils_obj *obj);
 extern void ils_inc_obj(struct ils_obj *orig, struct ils_obj *dest);
 
 /*
- * Retorna objetos complexos de outro objeto
- */
-extern struct fac_iterador *ils_ret_complex_objs(struct ils_obj *obj);
-
-/*
  * Define posição absoluta de um objeto no cenário
  */
 extern void ils_def_pos(struct ils_obj *obj, struct ils_obj *cen,
@@ -139,12 +134,6 @@ extern void ils_def_pos(struct ils_obj *obj, struct ils_obj *cen,
  * Define dimensão do objeto
  */
 extern void ils_def_dim(struct ils_obj *obj, float w, float h, float d);
-
-/*
- * Extrai objeto de um objeto complexo
- */
-extern struct ils_obj *ils_ret_obj_from_complex(
-        struct ils_complex_obj *complex);
 
 /*
  * Define posição relativa de um objeto no cenário
@@ -239,18 +228,6 @@ extern void ils_set_obj_status(struct ils_obj *obj, unsigned int status);
 extern void ils_reset_obj_status(struct ils_obj *obj, unsigned int status);
 
 /*
- * Retorna evento de um bot
- */
-extern struct ils_key *ils_ret_bot_event(struct ils_obj *cen,
-		struct ils_obj *obj);
-
-/*
- * Retorna evento de um controle
- */
-extern struct ils_key *ils_ret_key_event(struct ils_obj *obj,
-		struct ils_key_press *key_press);
-
-/*
  * Envia evento para fila
  */
 extern void ils_send_event(struct ils_obj *, struct ils_evento *);
@@ -342,11 +319,6 @@ extern struct ils_obj *ils_def_text_obj(char *name);
  * Cadastra textura para posterior atualização
  */
 extern struct ils_texture *ils_texture_inc(char *name, char *path);
-
-/*
- * Carrega imagens cadastradas (deprecated)
- */
-extern void ils_def_img(void);
 
 /*
  * Renderiza textura
