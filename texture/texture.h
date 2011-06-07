@@ -10,6 +10,10 @@
 
 #include "../ilusia.h"
 
+extern void _ini_textures(void);
+
+extern void _term_textures(void);
+
 extern struct ils_texture *_def_texture(char *id);
 
 extern int _load_texture(

@@ -107,8 +107,6 @@ struct ils_cor {
 
 extern void ils_ini(struct ils_config *config);
 
-extern void ils_ini_objects(void);
-
 extern struct ils_obj *ils_def_obj(char *obj);
 
 extern struct ils_obj *ils_ret_obj_by_name(char *name);
@@ -138,8 +136,6 @@ extern struct ils_pos ils_ret_obj_pos(
         struct ils_obj *obj, struct ils_obj *cen);
 
 extern void ils_def_output_proc(struct ils_obj *, void (*)(struct ils_view));
-
-extern void ils_ini_controls(void);
 
 extern struct ils_control *ils_def_control(char *control_name);
 
@@ -182,8 +178,6 @@ extern struct ils_key *ils_ret_key_event(struct ils_obj *obj,
 
 extern void ils_send_event(struct ils_obj *, struct ils_evento *);
 
-extern void ils_ini_timers(void);
-
 extern struct ils_timer *ils_def_timer(char *name, unsigned int tempo);
 
 extern unsigned char ils_ret_timer_mrk(struct ils_timer *timer);
@@ -198,10 +192,6 @@ extern void ils_reset_timer_cnt(struct ils_timer *timer);
 
 extern void ils_term_timer(struct ils_timer *timer);
 
-extern void ils_term_timers(void);
-
-extern void ils_term_controls(void);
-
 extern struct ils_sdl *ils_ret_sdl_fncs(void);
 
 extern struct ils_gl *ils_ret_gl_fncs(void);
@@ -214,16 +204,6 @@ extern void ils_start(
 		struct ils_obj *game, struct ils_obj *cen, struct ils_config config);
 
 extern void ils_term(struct ils_obj *game);
-
-extern void ils_term_objects(void);
-
-extern void ils_ini_textures(void);
-
-extern void ils_term_textures(void);
-
-extern void ils_ini_fonts(void);
-
-extern void ils_term_fonts(void);
 
 extern void ils_set_text(
         struct ils_obj *obj, char *text, struct ils_font *font);

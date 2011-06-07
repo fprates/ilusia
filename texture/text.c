@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <SDL/SDL_ttf.h>
 #include "texture.h"
+#include "text.h"
 
 struct ils_font {
     char *id;
@@ -22,12 +23,12 @@ static struct s_global {
     struct fac_lista *fonts;
 } global;
 
-void ils_ini_fonts(void)
+void _ini_fonts(void)
 {
     global.fonts = fac_ini_lista();
 }
 
-void ils_term_fonts(void)
+void _term_fonts(void)
 {
     struct ils_font *font;
     struct ils_sdl *sdl = ils_ret_sdl_fncs();

@@ -12,4 +12,8 @@
 
 extern void _call_output_proc(struct ils_obj *, struct ils_obj *);
 
+extern void _ini_objects(void);
+
+extern void _term_objects(void);
+
 #endif /* OBJECT_H_ */

@@ -10,6 +10,7 @@
 #include <faclib.h>
 #include "../ilusia.h"
 #include "object.h"
+#include "controls.h"
 
 static struct fac_lista *pool;
 
@@ -29,7 +30,7 @@ struct ils_control {
     struct ils_key key_bot;
 };
 
-void ils_ini_controls()
+void _ini_controls()
 {
     pool = fac_ini_lista();
 }
@@ -193,7 +194,7 @@ static void term_control(struct ils_control *control)
 	free(control);
 }
 
-void ils_term_controls(void)
+void _term_controls(void)
 {
     struct fac_iterador *it = fac_ini_iterador(pool);
 

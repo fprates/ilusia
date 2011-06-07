@@ -5,16 +5,21 @@
  *      Author: francisco.prates
  */
 
-#include "ilusia.h"
 #include <faclib.h>
+#include "object.h"
+#include "controls.h"
+#include "../ilusia.h"
+#include "../texture/texture.h"
+#include "../devices/timer.h"
+#include "../texture/text.h"
 
 void ils_ini(struct ils_config *config)
 {
-	ils_ini_objects();
-    ils_ini_controls();
-    ils_ini_textures();
-    ils_ini_timers();
-    ils_ini_fonts();
+    _ini_objects();
+    _ini_controls();
+    _ini_textures();
+    _ini_timers();
+    _ini_fonts();
 
     config->video.w = 800;
     config->video.h = 600;
@@ -46,9 +51,9 @@ void ils_ini(struct ils_config *config)
 
 void ils_term(struct ils_obj *obj)
 {
-    ils_term_objects();
-    ils_term_controls();
-    ils_term_textures();
-    ils_term_timers();
-    ils_term_fonts();
+    _term_objects();
+    _term_controls();
+    _term_textures();
+    _term_timers();
+    _term_fonts();
 }

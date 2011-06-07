@@ -33,7 +33,7 @@ struct ils_complex_obj {
 
 static struct fac_lista *pool;
 
-void ils_ini_objects(void)
+void _ini_objects(void)
 {
 	pool = fac_ini_lista();
 }
@@ -235,7 +235,7 @@ void _call_output_proc(struct ils_obj *cen, struct ils_obj *obj)
 	obj->proc_output(view);
 }
 
-void ils_term_objects(void)
+void _term_objects(void)
 {
 	struct ils_obj *obj;
 	struct fac_iterador *iti;

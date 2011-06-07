@@ -9,7 +9,6 @@
 #include <png.h>
 #include <setjmp.h>
 #include <faclib.h>
-#include <math.h>
 #include <jpeglib.h>
 #include "texture.h"
 
@@ -86,7 +85,7 @@ static struct s_global {
 	struct s_jpeg_err_manager jpeg_err;
 } global;
 
-void ils_ini_textures(void)
+void _ini_textures(void)
 {
     struct s_jpeg *jpeg = &global.jpeg;
     struct s_png *png = &global.png;
@@ -159,7 +158,7 @@ void ils_ini_textures(void)
     }
 }
 
-void ils_term_textures(void)
+void _term_textures(void)
 {
 	if (global.jpeg_lib != NULL)
 		 fac_lib_term(global.jpeg_lib);

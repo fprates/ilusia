@@ -6,6 +6,7 @@
  */
 
 #include "../ilusia.h"
+#include "timer.h"
 #include <faclib.h>
 
 // propriedades do timer
@@ -18,7 +19,7 @@ struct ils_timer {
 
 static struct fac_lista *pool;
 
-void ils_ini_timers(void)
+void _ini_timers(void)
 {
     pool = fac_ini_lista();
 }
@@ -107,7 +108,7 @@ void ils_term_timer(struct ils_timer *timer)
     free(timer);
 }
 
-void ils_term_timers(void)
+void _term_timers(void)
 {
     struct fac_iterador *it = fac_ini_iterador(pool);
 
