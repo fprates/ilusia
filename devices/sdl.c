@@ -48,6 +48,9 @@ static int ini_video(struct ils_config *config, struct s_sdl *sdl_)
     gl->glMatrixMode(GL_MODELVIEW);
     gl->glLoadIdentity();
 
+    if (sdl_->fnc.TTF_Init() < 0)
+        return -1;
+
     return 0;
 }
 
@@ -84,6 +87,7 @@ static int def_sdl_fnc(struct s_sdl *sdl_)
      */
     sdl_->fnc.TTF_Init = fac_ret_proc_lib(sdl_->ttf, "TTF_Init");
     sdl_->fnc.TTF_OpenFont = fac_ret_proc_lib(sdl_->ttf, "TTF_OpenFont");
+    sdl_->fnc.TTF_CloseFont = fac_ret_proc_lib(sdl_->ttf, "TTF_CloseFont");
     sdl_->fnc.TTF_RenderText_Blended = fac_ret_proc_lib(sdl_->ttf,
         "TTF_RenderText_Blended");
 

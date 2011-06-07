@@ -14,6 +14,7 @@ void ils_ini(struct ils_config *config)
     ils_ini_controls();
     ils_ini_textures();
     ils_ini_timers();
+    ils_ini_fonts();
 
     config->video.w = 800;
     config->video.h = 600;
@@ -49,4 +50,5 @@ void ils_term(struct ils_obj *obj)
     ils_term_controls();
     ils_term_textures();
     ils_term_timers();
+    ils_term_fonts();
 }

@@ -82,6 +82,7 @@ struct ils_sdl {
     TTF_Font * SDLCALL (*TTF_OpenFont)(const char *, int);
     SDL_Surface * SDLCALL (*TTF_RenderText_Blended)(TTF_Font *, const char *,
             SDL_Color);
+    void SDLCALL (*TTF_CloseFont)(TTF_Font *);
     SDL_Surface * SDLCALL (*IMG_Load)(const char *);
 };
 

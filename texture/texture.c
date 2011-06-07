@@ -11,7 +11,7 @@
 #include <faclib.h>
 #include <math.h>
 #include <jpeglib.h>
-#include "../ilusia.h"
+#include "texture.h"
 
 #ifdef linux
 #define ILS_JPEG_32 "/usr/lib/libjpeg.so"
@@ -20,15 +20,9 @@
 #endif
 
 struct ils_texture {
-    char *name;
-    char *path;
-    unsigned int id;
-    unsigned int w;
-    unsigned int h;
-    float r;
-    float g;
-    float b;
-    float a;
+    char *name, *path;
+    unsigned int id, w, h;
+    float r, g, b, a;
 };
 
 struct s_link {
@@ -176,28 +170,76 @@ void ils_term_textures(void)
 	fac_rm_lista(global.textures);
 	global.textures = NULL;
 }
-struct ils_texture *ils_texture_inc(char *id, char *path)
+
+struct ils_texture *_def_texture(char *id)
 {
     struct ils_texture *texture = malloc(sizeof(*texture));
 
     texture->name = id;
-    texture->path = path;
+    texture->path = NULL;
     texture->r = 1.0f;
     texture->g = 1.0f;
     texture->b = 1.0f;
     texture->a = 1.0f;
     texture->id = 0;
+
+    return texture;
+}
+
+struct ils_texture *ils_texture_inc(char *id, char *path)
+{
+    struct ils_texture *texture = _def_texture(id);
+
+    texture->path = path;
     fac_inc_item(global.textures, texture);
 
     return texture;
 }
 
-static char def_texture(char *name, struct s_image *image)
+int _load_texture(struct ils_texture *texture, unsigned int comp, void *data)
 {
     GLenum formato;
+    struct ils_gl *gl = ils_ret_gl_fncs();
+
+    if (texture == NULL)
+        return 1;
+
+    gl->glGenTextures(1, &texture->id);
+    gl->glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    gl->glBindTexture(GL_TEXTURE_2D, texture->id);
+
+    switch (comp) {
+    case 0:
+    	formato = GL_RGB;
+    	break;
+    case 1:
+    	formato = GL_LUMINANCE;
+    	break;
+    case 2:
+    	formato = GL_BGRA;
+    	break;
+    }
+
+    gl->gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, texture->w, texture->h,
+            formato, GL_UNSIGNED_BYTE, data);
+    gl->glTexParameteri (
+            GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    gl->glTexParameteri (
+            GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+
+    gl->glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+    gl->glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
+
+    gl->glEnable(GL_TEXTURE_GEN_S);
+    gl->glEnable(GL_TEXTURE_GEN_T);
+
+    return 0;
+}
+
+static char def_texture(char *name, struct s_image *image)
+{
     struct fac_iterador *it;
     struct ils_texture *texture = NULL;
-    struct ils_gl *gl = ils_ret_gl_fncs();
 
     if (image->data == NULL)
         return 1;
@@ -205,36 +247,18 @@ static char def_texture(char *name, struct s_image *image)
     it = fac_ini_iterador(global.textures);
     while (fac_existe_prox(it)) {
         texture = fac_proximo(it);
-        if (strcmp(texture->name, name) == 0)
+
+        if (strcmp(texture->name, name) == 0) {
+            texture->w = image->w;
+            texture->h = image->h;
+            _load_texture(texture, image->n_comp, image->data);
             break;
+        }
 
         texture = NULL;
     }
 
     fac_rm_iterador(it);
-
-    if (texture == NULL)
-        return 2;
-
-    gl->glGenTextures(1, &texture->id);
-    gl->glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    gl->glBindTexture(GL_TEXTURE_2D, texture->id);
-
-    formato = (image->n_comp == 1)?GL_LUMINANCE:GL_RGB;
-
-    texture->w = image->w;
-    texture->h = image->h;
-
-    gl->gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB, texture->w, texture->h,
-            formato, GL_UNSIGNED_BYTE, image->data);
-    gl->glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    gl->glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-
-    gl->glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-    gl->glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_OBJECT_LINEAR);
-
-    gl->glEnable(GL_TEXTURE_GEN_S);
-    gl->glEnable(GL_TEXTURE_GEN_T);
 
     free(image->data);
 
@@ -471,4 +495,11 @@ void ils_show_texture(struct ils_texture *texture, struct ils_pos *pos,
 
     if (texture->id > 0)
     	gl->glDisable(GL_TEXTURE_2D);
+}
+
+void _set_texture(
+        struct ils_texture *texture, unsigned int w, unsigned int h)
+{
+    texture->w = w;
+    texture->h = h;
 }

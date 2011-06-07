@@ -10,6 +10,7 @@
 #include "object.h"
 #include "../ilusia.h"
 #include "../devices/sdl.h"
+#include "../texture/text.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -234,6 +235,7 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
     }
 
     ils_def_img();
+    _def_fonts();
 
     printf("i: aguardando eventos...\n");
     system_.ret = 0;

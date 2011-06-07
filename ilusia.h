@@ -31,6 +31,9 @@ struct ils_obj;
 struct ils_complex_obj;
 struct ils_control;
 struct ils_timer;
+struct ils_font;
+struct ils_key;
+struct ils_texture;
 
 struct ils_video {
     unsigned int w;
@@ -95,36 +98,38 @@ struct ils_key_press {
     char pressed;
 };
 
-struct ils_key;
-
-struct ils_texture;
+struct ils_cor {
+    float r;
+    float g;
+    float b;
+    float a;
+};
 
 extern void ils_ini(struct ils_config *config);
 
 extern void ils_ini_objects(void);
 
-extern struct ils_obj *ils_def_obj(const char *);
+extern struct ils_obj *ils_def_obj(char *obj);
 
 extern struct ils_obj *ils_ret_obj_by_name(char *name);
 
-extern void ils_def_obj_espec(struct ils_obj *, void *);
+extern void ils_def_obj_espec(struct ils_obj *obj, void *espec);
 
-extern void *ils_ret_obj_espec(struct ils_obj *);
+extern void *ils_ret_obj_espec(struct ils_obj *obj);
 
-extern const char *ils_ret_obj_name(struct ils_obj *);
+extern char *ils_ret_obj_name(struct ils_obj *obj);
 
-extern void ils_inc_obj(struct ils_obj *, struct ils_obj *);
+extern void ils_inc_obj(struct ils_obj *orig, struct ils_obj *dest);
 
-extern struct fac_iterador *ils_ret_complex_objs(struct ils_obj *);
-
-const extern char *ils_ret_name(struct ils_obj *);
+extern struct fac_iterador *ils_ret_complex_objs(struct ils_obj *obj);
 
 extern void ils_def_pos(struct ils_obj *obj, struct ils_obj *cen,
 		float x, float y, float z);
 
 extern void ils_def_dim(struct ils_obj *obj, float w, float h, float d);
 
-extern struct ils_obj *ils_ret_obj_from_complex(struct ils_complex_obj *);
+extern struct ils_obj *ils_ret_obj_from_complex(
+        struct ils_complex_obj *complex);
 
 extern void ils_def_relat_pos(struct ils_obj *orig, struct ils_obj *dest,
 		float x, float y, float z);
@@ -215,6 +220,18 @@ extern void ils_term_objects(void);
 extern void ils_ini_textures(void);
 
 extern void ils_term_textures(void);
+
+extern void ils_ini_fonts(void);
+
+extern void ils_term_fonts(void);
+
+extern void ils_set_text(
+        struct ils_obj *obj, char *text, struct ils_font *font);
+
+extern struct ils_font *ils_def_font(
+        char *id, char *fontname, unsigned int size, struct ils_cor *cor);
+
+extern struct ils_obj *ils_def_text_obj(char *name);
 
 extern struct ils_texture *ils_texture_inc(char *name, char *path);
 

@@ -12,7 +12,7 @@
 #include "object.h"
 
 struct ils_obj {
-	const char *name;
+	char *name;
 	struct fac_lista *objs;
 	enum ils_event_source event_source;
 	struct ils_control *control;
@@ -38,7 +38,7 @@ void ils_ini_objects(void)
 	pool = fac_ini_lista();
 }
 
-struct ils_obj *ils_def_obj(const char *name)
+struct ils_obj *ils_def_obj(char *name)
 {
 	struct ils_obj *obj = malloc(sizeof(*obj));
 	obj->name = name;
@@ -82,7 +82,7 @@ void *ils_ret_obj_espec(struct ils_obj *obj)
     return obj->espec;
 }
 
-const char *ils_ret_obj_name(struct ils_obj *obj)
+char *ils_ret_obj_name(struct ils_obj *obj)
 {
     return obj->name;
 }
@@ -104,11 +104,6 @@ struct fac_iterador *ils_ret_complex_objs(struct ils_obj *obj)
 struct ils_obj *ils_ret_obj_from_complex(struct ils_complex_obj *complex)
 {
 	return complex->obj;
-}
-
-const char *ils_ret_name(struct ils_obj *obj)
-{
-	return obj->name;
 }
 
 void ils_def_obj_control(struct ils_obj *obj, struct ils_control *control,
