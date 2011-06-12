@@ -31,7 +31,7 @@ struct s_link {
 
 struct s_image {
     char *path;
-    unsigned int n_comp;
+    enum e_tpcolor tpcolor;
     unsigned int w;
     unsigned int h;
     void *data;
@@ -195,7 +195,8 @@ struct ils_texture *ils_texture_inc(char *id, char *path)
     return texture;
 }
 
-int _load_texture(struct ils_texture *texture, unsigned int comp, void *data)
+int _load_texture(
+        struct ils_texture *texture, enum e_tpcolor comp, void *data)
 {
     GLenum formato;
     struct ils_gl *gl = ils_ret_gl_fncs();
@@ -208,13 +209,13 @@ int _load_texture(struct ils_texture *texture, unsigned int comp, void *data)
     gl->glBindTexture(GL_TEXTURE_2D, texture->id);
 
     switch (comp) {
-    case 0:
+    case ILS_RGB:
     	formato = GL_RGB;
     	break;
-    case 1:
+    case ILS_LUMINANCE:
     	formato = GL_LUMINANCE;
     	break;
-    case 2:
+    case ILS_BGRA:
     	formato = GL_BGRA;
     	break;
     }
@@ -250,7 +251,7 @@ static char def_texture(char *name, struct s_image *image)
         if (strcmp(texture->name, name) == 0) {
             texture->w = image->w;
             texture->h = image->h;
-            _load_texture(texture, image->n_comp, image->data);
+            _load_texture(texture, image->tpcolor, image->data);
             break;
         }
 
@@ -324,15 +325,18 @@ static int load_png(FILE *fd, struct s_image *image)
         png->png_set_palette_to_rgb(png_ptr);
 
         channels = 3;
-        image->n_comp = 0;
+        image->tpcolor = ILS_RGB;
 
         break;
 
     case PNG_COLOR_TYPE_GRAY:
         bitdep = 8;
-        image->n_comp = 1;
+        image->tpcolor = ILS_LUMINANCE;
 
         break;
+
+    default:
+        image->tpcolor = ILS_RGB;
 	}
 
 	if (png->png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
@@ -386,11 +390,11 @@ static int load_jpeg(FILE *fd, struct s_image *image)
 	jpeg->jpeg_read_header(&cinfo, TRUE);
 	jpeg->jpeg_start_decompress(&cinfo);
 
-    image->n_comp = cinfo.output_components;
+    image->tpcolor = (cinfo.output_components == 1)?ILS_LUMINANCE:ILS_RGB;
     image->w = cinfo.output_width;
     image->h = cinfo.output_height;
 
-    row_span = image->n_comp * image->w;
+    row_span = cinfo.output_components * image->w;
     image->data = malloc(row_span * image->h);
 
     buffer = (*cinfo.mem->alloc_sarray)
