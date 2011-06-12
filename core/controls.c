@@ -97,6 +97,9 @@ struct ils_key *_ret_bot_event(struct ils_obj *cen, struct ils_obj *obj)
 	if (control == NULL)
 	    return NULL;
 
+	if (control->bot_proc == NULL)
+	    return NULL;
+
     control->key_bot.evcode = control->bot_proc(cen, obj);
 
     return &control->key_bot;
