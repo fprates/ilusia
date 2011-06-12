@@ -131,6 +131,12 @@ extern void ils_def_pos(struct ils_obj *obj, struct ils_obj *cen,
 		float x, float y, float z);
 
 /*
+ * Define escala absoluta do objeto no cenário
+ */
+extern void ils_def_scale(struct ils_obj *obj, struct ils_obj *cen,
+        float w, float h, float d);
+
+/*
  * Define dimensão do objeto
  */
 extern void ils_def_dim(struct ils_obj *obj, float w, float h, float d);
@@ -138,7 +144,7 @@ extern void ils_def_dim(struct ils_obj *obj, float w, float h, float d);
 /*
  * Define posição relativa de um objeto no cenário
  */
-extern void ils_def_relat_pos(struct ils_obj *orig, struct ils_obj *dest,
+extern void ils_def_relat_pos(struct ils_obj *obj, struct ils_obj *cen,
 		float x, float y, float z);
 
 /*

@@ -487,7 +487,7 @@ void ils_show_texture(struct ils_texture *texture, struct ils_pos *pos,
 
     gl->glColor4f(texture->r, texture->g, texture->b, texture->a);
     gl->glTranslatef(pos->x, pos->y, pos->z);
-    gl->glScalef(pos->sw, pos->sh, 1);
+    gl->glScalef(pos->sw, pos->sh, pos->sd);
     gl->glBegin(GL_QUADS);
         gl->glVertex3f(0, 0, 0);
         gl->glVertex3f(pos->dw, 0, 0);

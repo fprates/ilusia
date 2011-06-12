@@ -92,6 +92,16 @@ void ils_inc_obj(struct ils_obj *orig, struct ils_obj *dest)
 	struct ils_complex_obj *obj = malloc(sizeof(*obj));
 
 	obj->obj = orig;
+	obj->pos.sw = 1;
+	obj->pos.sh = 1;
+	obj->pos.sd = 1;
+	obj->pos.dw = 0;
+	obj->pos.dh = 0;
+	obj->pos.dd = 0;
+	obj->pos.x = 0;
+	obj->pos.y = 0;
+	obj->pos.z = 0;
+
 	fac_inc_item(dest->objs, obj);
 	printf("i: incluindo %s em %s.\n", orig->name, dest->name);
 }
@@ -157,17 +167,30 @@ void ils_def_dim(struct ils_obj *obj, float w, float h, float d)
     obj->pos.dd = d;
 }
 
-void ils_def_relat_pos(struct ils_obj *orig, struct ils_obj *dest,
-		float x, float y, float z)
+void ils_def_scale(struct ils_obj *obj, struct ils_obj *cen,
+        float w, float h, float d)
 {
-    struct ils_complex_obj *obj = ret_obj_from_cen(orig, dest);
+    struct ils_complex_obj *obj_ = ret_obj_from_cen(obj, cen);
 
-    if (obj == NULL)
+    if (obj_ == NULL)
         return;
 
-    obj->pos.x += x;
-    obj->pos.y += y;
-    obj->pos.z += z;
+    obj_->pos.sw = w;
+    obj_->pos.sh = h;
+    obj_->pos.sd = d;
+}
+
+void ils_def_relat_pos(struct ils_obj *obj, struct ils_obj *cen,
+		float x, float y, float z)
+{
+    struct ils_complex_obj *obj_ = ret_obj_from_cen(obj, cen);
+
+    if (obj_ == NULL)
+        return;
+
+    obj_->pos.x += x;
+    obj_->pos.y += y;
+    obj_->pos.z += z;
 }
 
 struct ils_pos ils_ret_obj_pos(struct ils_obj *orig, struct ils_obj *dest)

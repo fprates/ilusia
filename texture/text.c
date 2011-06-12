@@ -98,10 +98,6 @@ static void text_output_proc(struct ils_view view)
     struct s_text *text = ils_ret_obj_espec(view.obj);
     struct ils_pos pos = ils_ret_obj_pos(view.obj, view.cen);
 
-    pos.sw = 1;
-    pos.sh = 1;
-    pos.sd = 1;
-
     if ((text->texture == NULL) || (text->changed == 1))
         create_texture_from_text(ils_ret_obj_name(view.obj), text);
 
