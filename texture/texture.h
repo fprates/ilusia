@@ -22,7 +22,9 @@ extern void _term_textures(void);
 
 extern struct ils_texture *_def_texture(char *id);
 
-extern int _load_texture(
+extern void _rm_texture(struct ils_texture *texture);
+
+extern void _load_texture(
         struct ils_texture *texture, enum e_tpcolor tpcolor, void *data);
 
 extern void _set_texture(

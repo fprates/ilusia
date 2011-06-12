@@ -86,6 +86,7 @@ static void create_texture_from_text(char *name, struct s_text *text)
 
     sdl->SDL_LockSurface(surface_);
     _set_texture(text->texture, surface_->w, surface_->h);
+    _rm_texture(text->texture);
     _load_texture(text->texture, ILS_BGRA, surface_->pixels);
     sdl->SDL_UnlockSurface(surface_);
 

@@ -195,14 +195,22 @@ struct ils_texture *ils_texture_inc(char *id, char *path)
     return texture;
 }
 
-int _load_texture(
+void _rm_texture(struct ils_texture *texture)
+{
+    struct ils_gl *gl = ils_ret_gl_fncs();
+
+    if (texture->id == 0)
+        return;
+
+    gl->glDeleteTextures(1, &texture->id);
+    texture->id = 0;
+}
+
+void _load_texture(
         struct ils_texture *texture, enum e_tpcolor comp, void *data)
 {
     GLenum formato;
     struct ils_gl *gl = ils_ret_gl_fncs();
-
-    if (texture == NULL)
-        return 1;
 
     gl->glGenTextures(1, &texture->id);
     gl->glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -232,8 +240,6 @@ int _load_texture(
 
     gl->glEnable(GL_TEXTURE_GEN_S);
     gl->glEnable(GL_TEXTURE_GEN_T);
-
-    return 0;
 }
 
 static char def_texture(char *name, struct s_image *image)
