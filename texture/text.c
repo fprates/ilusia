@@ -40,6 +40,7 @@ void _term_fonts(void)
         free(font);
     }
 
+    fac_rm_iterador(it);
     fac_rm_lista(global.fonts);
 }
 
