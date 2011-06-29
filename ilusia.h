@@ -154,6 +154,18 @@ extern struct ils_pos ils_ret_obj_pos(
         struct ils_obj *obj, struct ils_obj *cen);
 
 /*
+ * Habilita objeto para o cenário
+ */
+extern void ils_set_obj_enabled(
+        struct ils_obj *orig, struct ils_obj *dest, unsigned char enabled);
+
+
+/*
+ * Retorna se objeto está habilitado para cenário
+ */
+extern unsigned char ils_is_obj_enabled(struct ils_obj *orig, struct ils_obj *dest);
+
+/*
  * Define rotina de processamento visual de um objeto
  */
 extern void ils_def_output_proc(struct ils_obj *, void (*)(struct ils_view));
@@ -205,7 +217,7 @@ extern void ils_def_obj_control(struct ils_obj *obj,
 /*
  * Retorna o controle de um objeto
  */
-extern struct ils_control *ils_ret_obj_control(struct ils_obj *);
+extern struct ils_control *ils_ret_obj_control(struct ils_obj *obj);
 
 /*
  * Retorna a fonte do evento de um objeto

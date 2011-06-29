@@ -255,6 +255,9 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
         while (fac_existe_prox(it)) {
             obj_ = _ret_obj_from_complex(fac_proximo(it));
 
+            if (!ils_is_obj_enabled(obj_, cen))
+                continue;
+
             switch (ils_ret_event_source(obj_)) {
             case ILS_KEY:
                 key = _ret_key_event(obj_, &key_press);

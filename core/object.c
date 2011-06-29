@@ -29,6 +29,7 @@ struct s_game {
 struct ils_complex_obj {
 	struct ils_obj *obj;
 	struct ils_pos pos;
+	unsigned int status;
 };
 
 static struct fac_lista *pool;
@@ -101,9 +102,44 @@ void ils_inc_obj(struct ils_obj *orig, struct ils_obj *dest)
 	obj->pos.x = 0;
 	obj->pos.y = 0;
 	obj->pos.z = 0;
+	obj->status = 1;
 
 	fac_inc_item(dest->objs, obj);
 	printf("i: incluindo %s em %s.\n", orig->name, dest->name);
+}
+
+static struct ils_complex_obj *ret_obj_from_cen(struct ils_obj *obj, struct ils_obj *cen)
+{
+    struct ils_complex_obj *obj_ = NULL;
+    struct fac_iterador *it = fac_ini_iterador(cen->objs);
+
+    while (fac_existe_prox(it)) {
+        obj_ = fac_proximo(it);
+
+        if (obj_->obj == obj)
+            break;
+
+        obj_ = NULL;
+    }
+
+    fac_rm_iterador(it);
+
+    return obj_;
+}
+
+void ils_set_obj_enabled(
+        struct ils_obj *orig, struct ils_obj *dest, unsigned char enabled)
+{
+    struct ils_complex_obj *obj = ret_obj_from_cen(orig, dest);
+
+    obj->status = enabled;
+}
+
+unsigned char ils_is_obj_enabled(struct ils_obj *orig, struct ils_obj *dest)
+{
+    struct ils_complex_obj *obj = ret_obj_from_cen(orig, dest);
+
+    return obj->status;
 }
 
 struct fac_iterador *_ret_complex_objs(struct ils_obj *obj)
@@ -126,25 +162,6 @@ void ils_def_obj_control(struct ils_obj *obj, struct ils_control *control,
 struct ils_control *ils_ret_obj_control(struct ils_obj *obj)
 {
 	return obj->control;
-}
-
-static struct ils_complex_obj *ret_obj_from_cen(struct ils_obj *obj, struct ils_obj *cen)
-{
-    struct ils_complex_obj *obj_ = NULL;
-    struct fac_iterador *it = fac_ini_iterador(cen->objs);
-
-    while (fac_existe_prox(it)) {
-        obj_ = fac_proximo(it);
-
-        if (obj_->obj == obj)
-            break;
-
-        obj_ = NULL;
-    }
-
-    fac_rm_iterador(it);
-
-    return obj_;
 }
 
 void ils_def_pos(struct ils_obj *obj, struct ils_obj *cen,
