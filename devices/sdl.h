@@ -10,7 +10,7 @@
 
 #include "../ilusia.h"
 
-#ifdef linux
+#ifdef __linux__
 #define ILSPREFIX
 #define ILS_SDL "libSDL.so"
 #define ILS_TTF "libSDL_ttf.so"

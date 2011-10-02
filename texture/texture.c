@@ -12,7 +12,7 @@
 #include <jpeglib.h>
 #include "texture.h"
 
-#ifdef linux
+#ifdef __linux__
 #define ILS_JPEG_32 "/usr/lib/libjpeg.so"
 #define ILS_JPEG_64 "/usr/lib64/libjpeg.so"
 #define ILS_PNG "libpng.so"
@@ -343,6 +343,8 @@ static int load_png(FILE *fd, struct s_image *image)
 
     default:
         image->tpcolor = ILS_RGB;
+
+        break;
 	}
 
 	if (png->png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) {
