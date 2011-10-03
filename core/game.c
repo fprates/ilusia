@@ -10,6 +10,7 @@
 #include "object.h"
 #include "../ilusia.h"
 #include "../core/controls.h"
+#include "../devices/gtk.h"
 #include "../devices/sdl.h"
 #include "../texture/text.h"
 #include "../texture/texture.h"
@@ -207,31 +208,15 @@ void ils_def_signal(int signal)
     }
 }
 
-void ils_start(struct ils_obj *game, struct ils_obj *cen,
-        struct ils_config config)
-{
+static void gfx_init(struct ils_config *config, struct ils_obj *cen) {
     struct ils_key_press key_press;
     struct ils_key *key;
-	struct ils_obj *obj_;
-	struct ils_timer *timer;
-	struct ils_evento evento;
-	struct fac_iterador *it;
+    struct fac_iterador *it;
+    struct ils_obj *obj_;
+    struct ils_timer *timer;
+    struct ils_evento evento;
 
-	if (game == NULL) {
-	    printf("e: objeto de jogo não inicializado.\n");
-	    return;
-	}
-
-	if (cen == NULL) {
-	    printf("e: cenário não inicializado.\n");
-	    return;
-	}
-
-	it = _ret_complex_objs(cen);
-
-	system_.config = &config;
-
-    if (_ini_devices(system_.config) < 0) {
+    if (_ini_devices(config) < 0) {
         printf("e: erro na inicialização dos dispositivos.\n");
         return;
     }
@@ -242,14 +227,16 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
     printf("i: aguardando eventos...\n");
     system_.ret = 0;
 
+    it = _ret_complex_objs(cen);
+
     while (!system_.ret) {
-    	key_press = _ret_key_pressed();
+        key_press = _ret_key_pressed();
 
-    	_frame_start();
+        _frame_start();
 
-    	_push_state();
-    	_call_output_proc(cen, cen);
-    	_pop_state();
+        _push_state();
+        _call_output_proc(cen, cen);
+        _pop_state();
 
         fac_rst_iterador(it);
         while (fac_existe_prox(it)) {
@@ -264,19 +251,19 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
                 break;
 
             case ILS_BOT:
-            	key = _ret_bot_event(cen, obj_);
-            	break;
+                key = _ret_bot_event(cen, obj_);
+                break;
             }
 
             _push_state();
             _call_output_proc(cen, obj_);
             _pop_state();
 
-            if (config.global_proc != NULL)
-                config.global_proc(cen, obj_);
+            if (config->global_proc != NULL)
+                config->global_proc(cen, obj_);
 
             if (key == NULL)
-            	continue;
+                continue;
 
             evento.evcode = ils_ret_event_code(key);
             evento.obj = obj_;
@@ -306,4 +293,35 @@ void ils_start(struct ils_obj *game, struct ils_obj *cen,
     fac_rm_iterador(it);
 
     _term_devices();
+}
+
+static void text_init(struct ils_config *config, struct ils_obj *cen) {
+    if (_ini_gtk(config) < 0)
+        printf("e: erro na inicialização do gtk.\n");
+}
+
+void ils_start(struct ils_obj *game, struct ils_obj *cen,
+        struct ils_config config)
+{
+	if (game == NULL) {
+	    printf("e: objeto de jogo não inicializado.\n");
+	    return;
+	}
+
+	if (cen == NULL) {
+	    printf("e: cenário não inicializado.\n");
+	    return;
+	}
+
+	system_.config = &config;
+
+	switch (system_.config->video.mode) {
+	case ILS_GFX:
+	    gfx_init(system_.config, cen);
+	    break;
+
+	case ILS_TEXT:
+	    text_init(system_.config, cen);
+	    break;
+	}
 }

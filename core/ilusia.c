@@ -13,13 +13,16 @@
 #include "../devices/timer.h"
 #include "../texture/text.h"
 
-void ils_ini(struct ils_config *config)
+void ils_ini(int *argc, char ***args, struct ils_config *config)
 {
     _ini_objects();
     _ini_controls();
     _ini_textures();
     _ini_timers();
     _ini_fonts();
+
+    config->argc = argc;
+    config->args = args;
 
     config->video.w = 800;
     config->video.h = 600;

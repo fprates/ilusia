@@ -27,6 +27,10 @@ enum ils_event_source {
 	ILS_KEY, ILS_BOT
 };
 
+enum ils_video_mode {
+    ILS_GFX, ILS_TEXT
+};
+
 struct ils_obj;
 struct ils_complex_obj;
 struct ils_control;
@@ -38,6 +42,7 @@ struct ils_texture;
 struct ils_video {
     unsigned int w, h;
     unsigned int bpp;
+    enum ils_video_mode mode;
 };
 
 struct ils_pos {
@@ -60,6 +65,8 @@ struct ils_camera {
 };
 
 struct ils_config {
+    int *argc;
+    char ***args;
     char *title;
     struct ils_video video;
     struct ils_pos view;
@@ -92,7 +99,7 @@ struct ils_cor {
 /*
  * Inicializa módulos da biblioteca
  */
-extern void ils_ini(struct ils_config *config);
+extern void ils_ini(int *argc, char ***args, struct ils_config *config);
 
 /*
  * Gera instância de um objeto do jogo
