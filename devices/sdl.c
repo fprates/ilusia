@@ -126,6 +126,7 @@ static int def_gl_fnc(struct s_sdl *sdl_)
     gl->glRotatef = sdl->SDL_GL_GetProcAddress("glRotatef");
     gl->glScalef = sdl->SDL_GL_GetProcAddress("glScalef");
     gl->glTranslatef = sdl->SDL_GL_GetProcAddress("glTranslatef");
+    gl->glVertex2d = sdl->SDL_GL_GetProcAddress("glVertex2d");
     gl->glVertex3f = sdl->SDL_GL_GetProcAddress("glVertex3f");
     gl->glViewport = sdl->SDL_GL_GetProcAddress("glViewport");
     gl->glGenTextures = sdl->SDL_GL_GetProcAddress("glGenTextures");
