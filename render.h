@@ -42,6 +42,7 @@ struct ils_gl {
     void APIENTRY (*glTexEnvi)(GLenum, GLenum, GLint);
     void APIENTRY (*glTranslatef)(GLfloat, GLfloat, GLfloat);
     void APIENTRY (*glVertex2d)(GLdouble, GLdouble);
+    void APIENTRY (*glVertex2f)(GLfloat, GLfloat);
     void APIENTRY (*glVertex3f)(GLfloat, GLfloat, GLfloat);
     void APIENTRY (*glViewport)(GLint, GLint, GLsizei, GLsizei);
     void APIENTRY (*glTexParameterf)(GLenum, GLenum, GLfloat);

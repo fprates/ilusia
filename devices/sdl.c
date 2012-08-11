@@ -107,17 +107,20 @@ static int def_gl_fnc(struct s_sdl *sdl_)
 	struct ils_sdl *sdl = &sdl_->fnc;
 
     gl->glBegin = sdl->SDL_GL_GetProcAddress("glBegin");
+    gl->glBindTexture = sdl->SDL_GL_GetProcAddress("glBindTexture");
     gl->glBlendFunc = sdl->SDL_GL_GetProcAddress("glBlendFunc");
     gl->glClear = sdl->SDL_GL_GetProcAddress("glClear");
     gl->glClearColor = sdl->SDL_GL_GetProcAddress("glClearColor");
     gl->glColor3f = sdl->SDL_GL_GetProcAddress("glColor3f");
     gl->glColor4f = sdl->SDL_GL_GetProcAddress("glColor4f");
+    gl->glDeleteTextures = sdl->SDL_GL_GetProcAddress("glDeleteTextures");
     gl->glDisable = sdl->SDL_GL_GetProcAddress("glDisable");
     gl->glEnable = sdl->SDL_GL_GetProcAddress("glEnable");
     gl->glEnd = sdl->SDL_GL_GetProcAddress("glEnd");
-    gl->glTexEnvi = sdl->SDL_GL_GetProcAddress("glTexEnvi");
+    gl->glGenTextures = sdl->SDL_GL_GetProcAddress("glGenTextures");
     gl->glLoadIdentity = sdl->SDL_GL_GetProcAddress("glLoadIdentity");
     gl->glMatrixMode = sdl->SDL_GL_GetProcAddress("glMatrixMode");
+    gl->glNormal3f = sdl->SDL_GL_GetProcAddress("glNormal3f");
     gl->glOrtho = sdl->SDL_GL_GetProcAddress("glOrtho");
     gl->glPixelStoref = sdl->SDL_GL_GetProcAddress("glPixelStoref");
     gl->glPixelStorei = sdl->SDL_GL_GetProcAddress("glPixelStorei");
@@ -127,19 +130,17 @@ static int def_gl_fnc(struct s_sdl *sdl_)
     gl->glScalef = sdl->SDL_GL_GetProcAddress("glScalef");
     gl->glTranslatef = sdl->SDL_GL_GetProcAddress("glTranslatef");
     gl->glVertex2d = sdl->SDL_GL_GetProcAddress("glVertex2d");
+    gl->glVertex2f = sdl->SDL_GL_GetProcAddress("glVertex2f");
     gl->glVertex3f = sdl->SDL_GL_GetProcAddress("glVertex3f");
     gl->glViewport = sdl->SDL_GL_GetProcAddress("glViewport");
-    gl->glGenTextures = sdl->SDL_GL_GetProcAddress("glGenTextures");
     gl->glTexGeni = sdl->SDL_GL_GetProcAddress("glTexGeni");
     gl->glTexGenfv = sdl->SDL_GL_GetProcAddress("glTexGenfv");
-    gl->glBindTexture = sdl->SDL_GL_GetProcAddress("glBindTexture");
     gl->glTexParameterf = sdl->SDL_GL_GetProcAddress("glTexParameterf");
     gl->glTexParameteri = sdl->SDL_GL_GetProcAddress("glTexParameteri");
     gl->glTexImage2D = sdl->SDL_GL_GetProcAddress("glTexImage2D");
     gl->glTexCoord2f = sdl->SDL_GL_GetProcAddress("glTexCoord2f");
-    gl->glDeleteTextures = sdl->SDL_GL_GetProcAddress("glDeleteTextures");
-    gl->glNormal3f = sdl->SDL_GL_GetProcAddress("glNormal3f");
     gl->glTexCoord3f = sdl->SDL_GL_GetProcAddress("glTexCoord3f");
+    gl->glTexEnvi = sdl->SDL_GL_GetProcAddress("glTexEnvi");
 
     gl->gluLookAt = fac_ret_proc_lib(sdl_->glu, "gluLookAt");
     gl->gluOrtho2D = fac_ret_proc_lib(sdl_->glu, "gluOrtho2D");
