@@ -65,8 +65,6 @@ struct ils_camera {
 };
 
 struct ils_config {
-    int *argc;
-    char ***args;
     char *title;
     struct ils_video video;
     struct ils_pos view;
@@ -99,7 +97,7 @@ struct ils_cor {
 /*
  * Inicializa módulos da biblioteca
  */
-extern void ils_ini(int *argc, char ***args, struct ils_config *config);
+extern void ils_ini(struct ils_config *config);
 
 /*
  * Gera instância de um objeto do jogo

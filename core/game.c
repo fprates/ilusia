@@ -10,7 +10,6 @@
 #include "object.h"
 #include "../ilusia.h"
 #include "../core/controls.h"
-#include "../devices/gtk.h"
 #include "../devices/sdl.h"
 #include "../texture/text.h"
 #include "../texture/texture.h"
@@ -208,7 +207,9 @@ void ils_def_signal(int signal)
     }
 }
 
-static void gfx_init(struct ils_config *config, struct ils_obj *cen) {
+void ils_start(struct ils_obj *game, struct ils_obj *cen,
+        struct ils_config config)
+{
     struct ils_key_press key_press;
     struct ils_key *key;
     struct fac_iterador *it;
@@ -216,24 +217,31 @@ static void gfx_init(struct ils_config *config, struct ils_obj *cen) {
     struct ils_timer *timer;
     struct ils_evento evento;
 
-    if (_ini_devices(config) < 0) {
+    if (game == NULL) {
+        printf("e: objeto de jogo não inicializado.\n");
+        return;
+    }
+
+    if (cen == NULL) {
+        printf("e: cenário não inicializado.\n");
+        return;
+    }
+
+    if (_ini_devices(&config) < 0) {
         printf("e: erro na inicialização dos dispositivos.\n");
         return;
     }
 
     _def_img();
     _def_fonts();
-
-    printf("i: aguardando eventos...\n");
-    system_.ret = 0;
-
     it = _ret_complex_objs(cen);
+    printf("i: aguardando eventos...\n");
 
+    system_.ret = 0;
     while (!system_.ret) {
         key_press = _ret_key_pressed();
 
         _frame_start();
-
         _push_state();
         _call_output_proc(cen, cen);
         _pop_state();
@@ -259,8 +267,8 @@ static void gfx_init(struct ils_config *config, struct ils_obj *cen) {
             _call_output_proc(cen, obj_);
             _pop_state();
 
-            if (config->global_proc != NULL)
-                config->global_proc(cen, obj_);
+            if (config.global_proc != NULL)
+                config.global_proc(cen, obj_);
 
             if (key == NULL)
                 continue;
@@ -271,7 +279,6 @@ static void gfx_init(struct ils_config *config, struct ils_obj *cen) {
             evento.key_code = key_press.code;
 
             timer = ils_ret_key_timer(key);
-
             if (timer != NULL) {
                 if (ils_is_timer_stopped(timer)) {
                     ils_start_timer(timer);
@@ -280,8 +287,8 @@ static void gfx_init(struct ils_config *config, struct ils_obj *cen) {
 
                 if (!ils_ret_timer_mrk(timer))
                     continue;
-                else
-                    ils_reset_timer_cnt(timer);
+
+                ils_reset_timer_cnt(timer);
             }
 
             ils_send_event(obj_, &evento);
@@ -291,37 +298,5 @@ static void gfx_init(struct ils_config *config, struct ils_obj *cen) {
     }
 
     fac_rm_iterador(it);
-
     _term_devices();
-}
-
-static void text_init(struct ils_config *config, struct ils_obj *cen) {
-    if (_ini_gtk(config) < 0)
-        printf("e: erro na inicialização do gtk.\n");
-}
-
-void ils_start(struct ils_obj *game, struct ils_obj *cen,
-        struct ils_config config)
-{
-	if (game == NULL) {
-	    printf("e: objeto de jogo não inicializado.\n");
-	    return;
-	}
-
-	if (cen == NULL) {
-	    printf("e: cenário não inicializado.\n");
-	    return;
-	}
-
-	system_.config = &config;
-
-	switch (system_.config->video.mode) {
-	case ILS_GFX:
-	    gfx_init(system_.config, cen);
-	    break;
-
-	case ILS_TEXT:
-	    text_init(system_.config, cen);
-	    break;
-	}
 }

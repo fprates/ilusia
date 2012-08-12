@@ -11,7 +11,6 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 #include <SDL/SDL_opengl.h>
-#include <gtk/gtk.h>
 
 /*
  * ponteiros para funcoes OpenGL.
@@ -60,17 +59,6 @@ struct ils_gl {
     void APIENTRY (*gluPerspective)(GLdouble, GLdouble, GLdouble, GLdouble);
     void APIENTRY (*gluBuild2DMipmaps)(
             GLenum, GLint, GLsizei, GLsizei, GLenum, GLenum, const void *);
-};
-
-struct ils_gtk {
-    gulong (*g_signal_connect_data)(gpointer, const gchar *, GCallback,
-            gpointer, GClosureNotify, GConnectFlags);
-    void (*GCallback)(void);
-    void (*gtk_init)(int *, char ***);
-    void (*gtk_main)(void);
-    void (*gtk_widget_show)(GtkWidget *);
-    GtkWidget *(*gtk_window_new)(GtkWindowType);
-    void (*gtk_main_quit)(void);
 };
 
 struct ils_sdl {
