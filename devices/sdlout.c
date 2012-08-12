@@ -9,7 +9,10 @@
 
 void _frame_start(void)
 {
+    struct ils_gl *gl = ils_ret_gl_fncs();
 
+    gl->glMatrixMode(GL_MODELVIEW);
+    gl->glLoadIdentity();
 }
 
 void _push_state(void)

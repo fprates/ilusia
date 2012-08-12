@@ -45,9 +45,6 @@ static int ini_video(struct ils_config *config, struct s_sdl *sdl_)
     		config->camera.objx, config->camera.objy, config->camera.objz,
     		config->camera.vupx, config->camera.vupy, config->camera.vupz);
 
-    gl->glMatrixMode(GL_MODELVIEW);
-    gl->glLoadIdentity();
-
     if (sdl_->fnc.TTF_Init() < 0)
         return -1;
 
