@@ -18,16 +18,20 @@
  */
 struct ils_gl {
     void APIENTRY (*glBegin)(GLenum);
+    void APIENTRY (*glBindTexture)(GLenum, GLuint);
     void APIENTRY (*glBlendFunc)(GLenum, GLenum);
     void APIENTRY (*glClear)(GLbitfield);
     void APIENTRY (*glClearColor)(GLclampf, GLclampf, GLclampf, GLclampf);
     void APIENTRY (*glColor3f)(GLfloat, GLfloat, GLfloat);
     void APIENTRY (*glColor4f)(GLfloat, GLfloat, GLfloat, GLfloat);
+    void APIENTRY (*glDeleteTextures)(GLsizei, const GLuint *);
     void APIENTRY (*glDisable)(GLenum);
     void APIENTRY (*glEnable)(GLenum);
     void APIENTRY (*glEnd)(void);
+    void APIENTRY (*glGenTextures)(GLsizei, GLuint *);
     void APIENTRY (*glLoadIdentity)(void);
     void APIENTRY (*glMatrixMode)(GLenum);
+    void APIENTRY (*glNormal3f)(GLfloat, GLfloat, GLfloat);
     void APIENTRY (*glOrtho)(GLdouble, GLdouble, GLdouble,
     		GLdouble, GLdouble, GLdouble);
     void APIENTRY (*glPixelStoref)(GLenum, GLfloat);
@@ -38,10 +42,10 @@ struct ils_gl {
     void APIENTRY (*glScalef)(GLfloat, GLfloat, GLfloat);
     void APIENTRY (*glTexEnvi)(GLenum, GLenum, GLint);
     void APIENTRY (*glTranslatef)(GLfloat, GLfloat, GLfloat);
+    void APIENTRY (*glVertex2d)(GLdouble, GLdouble);
+    void APIENTRY (*glVertex2f)(GLfloat, GLfloat);
     void APIENTRY (*glVertex3f)(GLfloat, GLfloat, GLfloat);
     void APIENTRY (*glViewport)(GLint, GLint, GLsizei, GLsizei);
-    void APIENTRY (*glGenTextures)(GLsizei, GLuint *);
-    void APIENTRY (*glBindTexture)(GLenum, GLuint);
     void APIENTRY (*glTexParameterf)(GLenum, GLenum, GLfloat);
     void APIENTRY (*glTexParameteri)(GLenum, GLenum, GLint);
     void APIENTRY (*glTexGeni)(GLenum, GLenum, GLint);
@@ -49,8 +53,6 @@ struct ils_gl {
     void APIENTRY (*glTexImage2D)(GLenum, GLint, GLint, GLsizei, GLsizei,
     		GLint, GLenum, GLenum, const GLvoid *);
     void APIENTRY (*glTexCoord2f)(GLfloat, GLfloat);
-    void APIENTRY (*glDeleteTextures)(GLsizei, const GLuint *);
-    void APIENTRY (*glNormal3f)(GLfloat, GLfloat, GLfloat);
     void APIENTRY (*glTexCoord3f)(GLfloat, GLfloat, GLfloat);
     void APIENTRY (*gluLookAt)(GLdouble, GLdouble, GLdouble,
     		GLdouble, GLdouble, GLdouble, GLdouble, GLdouble, GLdouble);

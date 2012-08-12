@@ -47,6 +47,9 @@ struct ils_obj *ils_def_obj(char *name)
 	obj->espec = NULL;
 	obj->control = NULL;
 	obj->proc_output = NULL;
+	obj->pos.dw = 0;
+	obj->pos.dh = 0;
+	obj->pos.dd = 0;
 
 	fac_inc_item(pool, obj);
 
@@ -164,17 +167,17 @@ struct ils_control *ils_ret_obj_control(struct ils_obj *obj)
 	return obj->control;
 }
 
-void ils_def_pos(struct ils_obj *obj, struct ils_obj *cen,
+void ils_def_pos(struct ils_obj *orig, struct ils_obj *dest,
         float x, float y, float z)
 {
-	struct ils_complex_obj *obj_ = ret_obj_from_cen(obj, cen);
+	struct ils_complex_obj *obj = ret_obj_from_cen(orig, dest);
 
-	if (obj_ == NULL)
+	if (obj == NULL)
 	    return;
 
-    obj_->pos.x = x;
-    obj_->pos.y = y;
-    obj_->pos.z = z;
+    obj->pos.x = x;
+    obj->pos.y = y;
+    obj->pos.z = z;
 }
 
 void ils_def_dim(struct ils_obj *obj, float w, float h, float d)
@@ -212,17 +215,20 @@ void ils_def_relat_pos(struct ils_obj *obj, struct ils_obj *cen,
 
 struct ils_pos ils_ret_obj_pos(struct ils_obj *orig, struct ils_obj *dest)
 {
-    struct ils_pos pos = {0};
+    struct ils_pos pos;
 	struct ils_complex_obj *obj = ret_obj_from_cen(orig, dest);
 
 	if (obj == NULL)
-	    return pos;
+	    return (struct ils_pos){0};
 
-	obj->pos.dw = obj->obj->pos.dw;
-	obj->pos.dh = obj->obj->pos.dh;
-	obj->pos.dd = obj->obj->pos.dd;
-
-	return obj->pos;
+	pos = orig->pos;
+	pos.x = obj->pos.x;
+	pos.y = obj->pos.y;
+	pos.z = obj->pos.z;
+	pos.sw = obj->pos.sw;
+	pos.sh = obj->pos.sh;
+	pos.sd = obj->pos.sd;
+	return pos;
 }
 
 void ils_def_output_proc(struct ils_obj *obj,
